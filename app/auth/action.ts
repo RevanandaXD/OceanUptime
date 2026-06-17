@@ -1,0 +1,57 @@
+"use server";
+
+import { createClient } from "@/utils/supabase/server";
+import { redirect } from "next/navigation";
+
+export async function login(formData: FormData) {
+  const email = formData.get("email") as string;
+  const password = formData.get("password") as string;
+
+  if (!email || !password) {
+    return {
+      error: "Email dan password wajib di isi.",
+    };
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+
+  if (error) {
+    return {
+      error: error?.message,
+    };
+  }
+
+  redirect("/dashboard/overview");
+}
+
+export async function signup(formData: FormData) {
+  const email = formData.get("email") as string;
+  const password = formData.get("password") as string;
+
+  const supabase = await createClient();
+
+  const { error } = await supabase.auth.signUp({
+    email,
+    password,
+  })
+
+  if (error) {
+    return {error: error.message}
+  }
+
+  return {
+    success: "Pendaftaran berhasil! Silakan cek email Anda untuk konfirmasi (jika fitur konfirmasi email aktif di Supabase)."
+  }
+}
+
+export async function logout() {
+  const supabase = await createClient();
+
+  await supabase.auth.signOut();
+
+  redirect("/auth")
+}
