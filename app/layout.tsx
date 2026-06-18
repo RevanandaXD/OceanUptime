@@ -15,9 +15,58 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "OceanUptime",
+  metadataBase: new URL("https://oceanuptime.vercel.app"),
+  title: {
+    default: "OceanUptime - Unified Infrastructure Monitoring",
+    template: "%s | OceanUptime",
+  },
   description:
-    "OceanUptime is a multi-provider website monitoring dashboard that allows users to monitor uptime, response time, deployment status, SSL validity, and infrastructure health across multiple hosting providers such as Vercel, Netlify, Cloudflare Pages, Railway, and GitHub Pages.",
+    "Monitor uptime, response times, SSL validity, and deployment statuses across Vercel, Netlify, Cloudflare, and more. A modern multi-provider monitoring dashboard.",
+  keywords: [
+    "uptime monitoring",
+    "website monitor",
+    "SSL tracking",
+    "server health",
+    "deployment status",
+    "developer tools",
+  ],
+  authors: [{ name: "OceanUptime" }],
+  creator: "OceanUptime",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://oceanuptime.vercel.app",
+    title: "OceanUptime - Unified Infrastructure Monitoring",
+    description:
+      "Monitor uptime, response times, SSL validity, and deployment statuses across Vercel, Netlify, Cloudflare, and more.",
+    siteName: "OceanUptime",
+    images: [
+      {
+        url: "/images/Preview.png",
+        width: 1200,
+        height: 630,
+        alt: "OceanUptime Dashboard Preview",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "OceanUptime - Unified Infrastructure Monitoring",
+    description:
+      "Monitor uptime, response times, SSL validity, and deployment statuses across Vercel, Netlify, Cloudflare, and more.",
+    images: ["/images/Preview.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
 };
 
 export default function RootLayout({

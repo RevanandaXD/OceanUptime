@@ -33,6 +33,16 @@ export default function AuthPage() {
 
     const formData = new FormData(event.currentTarget);
 
+    if (mode === "signup") {
+      const password = formData.get("password") as string;
+      const confirmPassword = formData.get("confirmPassword") as string;
+      
+      if (password !== confirmPassword) {
+        setError("Password dan Konfirmasi Password tidak cocok.");
+        return;
+      }
+    }
+
     startTransition(async () => {
       if (mode === "login") {
         const result = await login(formData);
@@ -112,7 +122,7 @@ export default function AuthPage() {
               {/* Password */}
               <div className="space-y-1.5">
                 <label className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 block">
-                  Secret Key / Password
+                  Password
                 </label>
                 <div className="relative group">
                   <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500 group-focus-within:text-indigo-400 transition-colors" />
@@ -125,6 +135,25 @@ export default function AuthPage() {
                   />
                 </div>
               </div>
+
+              {/* Confirm Password */}
+              {mode === "signup" && (
+                <div className="space-y-1.5">
+                  <label className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 block">
+                    Confirm Password
+                  </label>
+                  <div className="relative group">
+                    <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500 group-focus-within:text-indigo-400 transition-colors" />
+                    <input
+                      name="confirmPassword"
+                      type="password"
+                      required
+                      placeholder="••••••••"
+                      className="w-full bg-zinc-950 border border-zinc-800 focus:border-indigo-500/80 rounded-xl py-3 pl-10 pr-4 text-xs font-semibold placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/10 transition-all text-white"
+                    />
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Button */}

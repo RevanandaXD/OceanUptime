@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import Navbar from "@/component/ui/Navbar";
+import { ScrollReveal } from "@/component/ui/ScrollReveal";
 import {
   Activity,
   Globe,
@@ -10,6 +11,7 @@ import {
   CheckCircle2,
   Zap,
 } from "lucide-react";
+import Footer from "@/component/ui/Footer";
 
 export default function Home() {
   return (
@@ -21,7 +23,8 @@ export default function Home() {
 
         {/* --- Hero Section --- */}
         <section className="w-full max-w-7xl mx-auto px-6 pt-20 pb-24 flex flex-col items-center text-center relative z-10">
-          <h1 className="text-4xl md:text-6xl font-heading font-extrabold text-white tracking-tight leading-tight mb-6">
+          <ScrollReveal className="flex flex-col items-center">
+            <h1 className="text-4xl md:text-6xl font-heading font-extrabold text-white tracking-tight leading-tight mb-6">
             Monitor your infrastructure <br className="hidden md:block" />
             <span className="text-transparent bg-clip-text bg-linear-to-r from-[#7aa2f7] to-[#bd93f9]">
               with confidence.
@@ -48,6 +51,7 @@ export default function Home() {
               View Features
             </Link>
           </div>
+          </ScrollReveal>
         </section>
 
         {/* Overview */}
@@ -55,8 +59,9 @@ export default function Home() {
           id="overview"
           className="w-full max-w-7xl mx-auto px-6 pt-25 relative z-10"
         >
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-heading font-bold text-white mb-4">
+          <ScrollReveal delay={0.1}>
+            <div className="text-center mb-16">
+              <h2 className="text-3xl font-heading font-bold text-white mb-4">
               See It in Action
             </h2>
             <p className="text-[#a9b1d6] max-w-xl mx-auto font-medium">
@@ -64,6 +69,7 @@ export default function Home() {
               melacak performa infrastruktur Anda.
             </p>
           </div>
+          </ScrollReveal>
           <div className="w-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 relative z-20 px-4 mb-12">
             {[
               {
@@ -91,10 +97,10 @@ export default function Home() {
                 desc: "Connect Vercel, Netlify, and Cloudflare to view live deployment statuses.",
               },
             ].map((img, i) => (
-              <div
-                key={i}
-                className="group relative rounded-2xl overflow-hidden border border-[#2f3549]/50 bg-[#1f2335] hover:border-[#7aa2f7]/40 hover:shadow-2xl hover:shadow-[#7aa2f7]/5 transition-all duration-300"
-              >
+              <ScrollReveal key={i} delay={0.1 * i} className="h-full">
+                <div
+                  className="group relative h-full rounded-2xl overflow-hidden border border-[#2f3549]/50 bg-[#1f2335] hover:border-[#7aa2f7]/40 hover:shadow-2xl hover:shadow-[#7aa2f7]/5 transition-all duration-300"
+                >
                 <div className="flex items-center gap-2 px-4 py-2.5 bg-[#16161e] border-b border-[#2f3549]/50">
                   <div className="flex gap-1.5">
                     <div className="w-2.5 h-2.5 rounded-full bg-red-500/80"></div>
@@ -121,6 +127,7 @@ export default function Home() {
                   <p className="text-xs text-[#a9b1d6]/80">{img.desc}</p>
                 </div>
               </div>
+              </ScrollReveal>
             ))}
           </div>
         </section>
@@ -130,8 +137,9 @@ export default function Home() {
           id="features"
           className="w-full max-w-7xl mx-auto px-6 py-24 relative z-10 border-t border-[#2f3549]/50"
         >
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-heading font-bold text-white mb-4">
+          <ScrollReveal delay={0.1}>
+            <div className="text-center mb-16">
+              <h2 className="text-3xl font-heading font-bold text-white mb-4">
               Everything you need to stay online
             </h2>
             <p className="text-[#a9b1d6] max-w-xl mx-auto">
@@ -139,6 +147,7 @@ export default function Home() {
               interface.
             </p>
           </div>
+          </ScrollReveal>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
@@ -173,10 +182,10 @@ export default function Home() {
                 icon: Zap,
               },
             ].map((feature, idx) => (
-              <div
-                key={idx}
-                className="glass-panel p-6 rounded-2xl border border-[#2f3549]/50 hover:border-[#7aa2f7]/50 transition-colors group"
-              >
+              <ScrollReveal key={idx} delay={0.1 * idx} className="h-full">
+                <div
+                  className="glass-panel h-full p-6 rounded-2xl border border-[#2f3549]/50 hover:border-[#7aa2f7]/50 transition-colors group"
+                >
                 <div className="w-12 h-12 rounded-xl bg-[#1f2335] flex items-center justify-center mb-4 border border-[#2f3549] group-hover:bg-[#7aa2f7]/10 group-hover:border-[#7aa2f7]/30 transition-colors">
                   <feature.icon className="h-6 w-6 text-[#7aa2f7]" />
                 </div>
@@ -187,6 +196,7 @@ export default function Home() {
                   {feature.desc}
                 </p>
               </div>
+              </ScrollReveal>
             ))}
           </div>
         </section>
@@ -196,14 +206,16 @@ export default function Home() {
           id="faq"
           className="w-full max-w-4xl mx-auto px-6 py-24 relative z-10 border-t border-[#2f3549]/50"
         >
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-heading font-bold text-white mb-4">
+          <ScrollReveal delay={0.1}>
+            <div className="text-center mb-16">
+              <h2 className="text-3xl font-heading font-bold text-white mb-4">
               Frequently Asked Questions
             </h2>
             <p className="text-[#a9b1d6] max-w-xl mx-auto">
               Have questions about OceanUptime? We have answers.
             </p>
           </div>
+          </ScrollReveal>
 
           <div className="space-y-6">
             {[
@@ -224,10 +236,10 @@ export default function Home() {
                 a: "OceanUptime supports native browser web push notifications (available on Android and desktop browsers) to alert you instantly the second a website goes offline or recovers.",
               },
             ].map((faq, idx) => (
-              <div
-                key={idx}
-                className="glass-panel p-6 rounded-2xl border border-[#2f3549]/50 hover:border-[#7aa2f7]/30 transition-all"
-              >
+              <ScrollReveal key={idx} delay={0.1 * idx}>
+                <div
+                  className="glass-panel p-6 rounded-2xl border border-[#2f3549]/50 hover:border-[#7aa2f7]/30 transition-all"
+                >
                 <h3 className="text-lg font-bold text-white mb-2 flex items-start gap-3">
                   <span className="text-[#7aa2f7]">Q:</span>
                   <span>{faq.q}</span>
@@ -236,13 +248,15 @@ export default function Home() {
                   {faq.a}
                 </p>
               </div>
+              </ScrollReveal>
             ))}
           </div>
         </section>
 
         {/* --- CTA Section --- */}
         <section className="w-full max-w-4xl mx-auto px-6 py-24 relative z-10 text-center">
-          <div className="group relative p-12 rounded-3xl border border-[#7aa2f7]/20 bg-[#1e2230]/40 backdrop-blur-md overflow-hidden transition-all duration-300 hover:border-[#7aa2f7]/40 hover:shadow-2xl hover:shadow-[#7aa2f7]/5">
+          <ScrollReveal delay={0.2}>
+            <div className="group relative p-12 rounded-3xl border border-[#7aa2f7]/20 bg-[#1e2230]/40 backdrop-blur-md overflow-hidden transition-all duration-300 hover:border-[#7aa2f7]/40 hover:shadow-2xl hover:shadow-[#7aa2f7]/5">
             {/* Background Decorative Grid */}
             <div className="absolute inset-0 opacity-[0.03] mix-blend-overlay pointer-events-none bg-[radial-gradient(#a9b1d6_1px,transparent_1px)] [background-size:20px_20px]" />
 
@@ -271,23 +285,12 @@ export default function Home() {
               </Link>
             </div>
           </div>
+          </ScrollReveal>
         </section>
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-[#2f3549]/50 py-8 relative z-10">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <Activity className="h-4 w-4 text-[#7aa2f7]" />
-            <span className="font-heading font-bold text-sm text-white">
-              OceanUptime
-            </span>
-          </div>
-          <p className="text-xs text-[#a9b1d6]">
-            &copy; {new Date().getFullYear()} OceanUptime. All rights reserved.
-          </p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

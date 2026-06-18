@@ -8,11 +8,11 @@ import {
   Activity,
   ShieldAlert,
   Server,
+  Loader2,
 } from "lucide-react";
 import MonitorChart from "@/component/shared/MonitorChart";
 import CardStats from "@/component/shared/CardStats";
 import Tables from "@/component/shared/Tables";
-
 import { useDashboard } from "../../../context/DashboardContext";
 
 const responseTimeTrend = [
@@ -21,8 +21,19 @@ const responseTimeTrend = [
 ];
 
 export default function AnalyticsPage() {
-  const { monitors, incidents, totalChecks = 0 } = useDashboard();
+  const { monitors, incidents, totalChecks = 0, isLoadingInitialData } = useDashboard();
   const [timeRange, setTimeRange] = useState("7D");
+
+  if (isLoadingInitialData && monitors.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
+        <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
+        <p className="text-sm text-zinc-500 dark:text-zinc-400 font-semibold animate-pulse">
+          Loading analytics...
+        </p>
+      </div>
+    );
+  }
 
   // Filter monitors that are currently active
   const activeMonitors = monitors.filter((m) => m.isActive);

@@ -12,16 +12,27 @@ import {
   RotateCw,
   Server,
   AlertCircle,
+  Loader2,
 } from "lucide-react";
 import Tables from "@/component/shared/Tables";
-
 import { useDashboard } from "../../../context/DashboardContext";
 
 export default function DeploymentPage() {
-  const { monitors, configuredProviders = [] } = useDashboard();
+  const { monitors, configuredProviders = [], isLoadingInitialData } = useDashboard();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedProvider, setSelectedProvider] = useState("ALL");
   const [deployingId, setDeployingId] = useState<string | null>(null);
+
+  if (isLoadingInitialData && monitors.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
+        <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
+        <p className="text-sm text-zinc-500 dark:text-zinc-400 font-semibold animate-pulse">
+          Loading deployments...
+        </p>
+      </div>
+    );
+  }
 
   const handleRedeploy = (id: string) => {
     setDeployingId(id);

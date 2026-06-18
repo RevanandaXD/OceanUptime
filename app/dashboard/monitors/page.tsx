@@ -10,15 +10,14 @@ import {
   ArrowUpRight,
   Server,
   X,
+  Loader2,
 } from "lucide-react";
 import MonitorChart from "@/component/shared/MonitorChart";
-
 import { useDashboard } from "@/context/DashboardContext";
 import { addMonitor, deleteMonitor as deleteMonitorAction, toogleMonitorStatus } from "./action";
 import Popup from "@/component/shared/Popup";
-
 export default function MonitorsPage() {
-  const { monitors, incidents, handleRefresh } = useDashboard();
+  const { monitors, incidents, handleRefresh, isLoadingInitialData } = useDashboard();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [chartType, setChartType] = useState<"line" | "bar">("line");
@@ -30,6 +29,17 @@ export default function MonitorsPage() {
     expectedKeyword: "",
     isActive: true,
   });
+
+  if (isLoadingInitialData && monitors.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
+        <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
+        <p className="text-sm text-zinc-500 dark:text-zinc-400 font-semibold animate-pulse">
+          Loading monitored websites...
+        </p>
+      </div>
+    );
+  }
 
   // States for custom delete popup confirmation
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);

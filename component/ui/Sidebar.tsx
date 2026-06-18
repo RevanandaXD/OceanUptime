@@ -12,6 +12,7 @@ import {
   Settings,
 } from "lucide-react";
 import { UserProfile } from "../shared/UserProfile";
+import Image from "next/image";
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -71,7 +72,16 @@ export default function Sidebar() {
           href="/dashboard/overview"
           className="flex items-center pl-[14px] outline-none group/logo w-full"
         >
-          <span className="font-heading font-extrabold text-2xl text-[#77a2fc] tracking-tight">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg">
+            <Image 
+              src="/Logo.png"
+              width={32}
+              height={32}
+              alt="logo-oceanuptime"
+              className="object-contain"
+            />
+          </div>
+          <span className="ml-3 font-heading font-extrabold text-xl text-[#77a2fc] tracking-tight opacity-0 -translate-x-2 transition-all duration-300 ease-in-out group-hover:translate-x-0 group-hover:opacity-100 whitespace-nowrap">
             OCEAN<span className="text-[#fc808b]">UPTIME</span>
           </span>
         </Link>

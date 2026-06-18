@@ -16,7 +16,7 @@ export default function Navbar() {
       <div className="max-w-7xl h-full mx-auto px-6 flex items-center justify-between">
         {/* Brand Logo */}
         <Link href="/" className="flex items-center gap-2.5 group">
-          <span className="font-heading font-extrabold text-2xl text-[#77a2fc] tracking-tight">
+          <span className="font-heading font-extrabold text-xl text-[#77a2fc] tracking-tight">
             OCEAN<span className="text-[#fc808b]">UPTIME</span>
           </span>
         </Link>
