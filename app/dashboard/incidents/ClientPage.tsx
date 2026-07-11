@@ -71,14 +71,14 @@ export default function IncidentsClient() {
         if (isActive) {
           return (
             <span
-              className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold ${
+              className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold whitespace-nowrap ${
                 isDegraded
                   ? "bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400 border border-amber-100 dark:border-amber-900/30 animate-pulse"
                   : "bg-rose-50 text-rose-700 dark:bg-rose-950/30 dark:text-rose-400 pulse-red border border-rose-100 dark:border-rose-900/30"
               }`}
             >
               <AlertTriangle className="h-3 w-3" />
-              {isDegraded ? "Something Wrong" : "Active"}
+              {isDegraded ? "Degraded" : "Active"}
             </span>
           );
         }

@@ -20,13 +20,22 @@ import Footer from "@/component/ui/Footer";
 
 export const metadata: Metadata = {
   title: "OceanUptime - Unified Infrastructure Monitoring",
-  description: "Monitor uptime, response times, SSL validity, and deployment statuses across Vercel, Netlify, Cloudflare, and more.",
-  keywords: ["uptime monitoring", "website monitor", "SSL tracking", "server health", "deployment status", "developer tools"],
+  description:
+    "Monitor uptime, response times, SSL validity, and deployment statuses across Vercel, Netlify, Cloudflare, and more.",
+  keywords: [
+    "uptime monitoring",
+    "website monitor",
+    "SSL tracking",
+    "server health",
+    "deployment status",
+    "developer tools",
+  ],
   openGraph: {
     title: "OceanUptime - Unified Infrastructure Monitoring",
-    description: "Monitor uptime, response times, SSL validity, and deployment statuses across Vercel, Netlify, Cloudflare, and more.",
+    description:
+      "Monitor uptime, response times, SSL validity, and deployment statuses across Vercel, Netlify, Cloudflare, and more.",
     type: "website",
-  }
+  },
 };
 
 const jsonLd = {
@@ -57,7 +66,9 @@ export default function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <style dangerouslySetInnerHTML={{ __html: `
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
         @keyframes trace-right {
           0% { left: -50px; opacity: 0; }
           10% { opacity: 1; }
@@ -89,14 +100,16 @@ export default function Home() {
         .animated-border-glow {
           animation: border-glow-pulse 3s ease-in-out infinite;
         }
-      `}} />
+      `,
+        }}
+      />
 
       <Navbar />
 
       <main className="grow flex flex-col items-center pt-28 overflow-hidden relative">
         {/* Modern grid background pattern */}
         <div className="absolute inset-0 bg-[radial-gradient(#1f2937_1px,transparent_1px)] [background-size:24px_24px] opacity-30 pointer-events-none" />
-        
+
         {/* Subtle top spotlight effect */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80%] max-w-[800px] h-[350px] bg-blue-950/10 blur-[100px] rounded-full pointer-events-none" />
 
@@ -118,7 +131,9 @@ export default function Home() {
             </h1>
 
             <p className="text-base md:text-lg text-zinc-400 max-w-2xl mb-8 leading-relaxed">
-              A unified, developer-friendly dashboard to track website uptime, latency performance, SSL certificate validity, and live build deployments across Vercel, Netlify, and Cloudflare.
+              A unified, developer-friendly dashboard to track website uptime,
+              latency performance, SSL certificate validity, and live build
+              deployments across Vercel, Netlify, and Cloudflare.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3">
@@ -150,7 +165,8 @@ export default function Home() {
                 Designed for Developer Workflows
               </h2>
               <p className="text-zinc-400 max-w-xl mx-auto text-sm leading-relaxed">
-                OceanUptime monitors everything and outputs clean status updates, making infrastructure tracking effortless.
+                OceanUptime monitors everything and outputs clean status
+                updates, making infrastructure tracking effortless.
               </p>
             </div>
           </ScrollReveal>
@@ -208,7 +224,9 @@ export default function Home() {
                     <h4 className="font-semibold text-zinc-200 text-sm mb-1.5">
                       {img.title}
                     </h4>
-                    <p className="text-xs text-zinc-400 leading-relaxed">{img.desc}</p>
+                    <p className="text-xs text-zinc-400 leading-relaxed">
+                      {img.desc}
+                    </p>
                   </div>
                 </div>
               </ScrollReveal>
@@ -227,28 +245,50 @@ export default function Home() {
                 Integrate Anywhere In Your Stack
               </h2>
               <p className="text-zinc-400 max-w-xl mx-auto text-sm leading-relaxed">
-                Connect your cloud providers in seconds and receive raw structured JSON statuses or triggers directly in your build pipelines.
+                Connect your cloud providers in seconds and receive raw
+                structured JSON statuses or triggers directly in your build
+                pipelines.
               </p>
             </div>
           </ScrollReveal>
 
           {/* Grid Layout connecting APIs to a central Monitor Terminal */}
           <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative">
-            
             {/* Left Column: Cloud Providers (Col Span 5) */}
             <div className="lg:col-span-5 space-y-4 relative">
               {[
-                { name: "Vercel Integrations", desc: "Sync deployment logs & verify status checks.", tag: "API Syncing" },
-                { name: "Netlify Webhooks", desc: "Instantly detect new deploys and test availability.", tag: "Automatic" },
-                { name: "Cloudflare Pages", desc: "Track latency and domain health edge-wide.", tag: "Edge Checks" }
+                {
+                  name: "Vercel Integrations",
+                  desc: "Sync deployment logs & verify status checks.",
+                  tag: "API Syncing",
+                },
+                {
+                  name: "Netlify Webhooks",
+                  desc: "Instantly detect new deploys and test availability.",
+                  tag: "Automatic",
+                },
+                {
+                  name: "Cloudflare Pages",
+                  desc: "Track latency and domain health edge-wide.",
+                  tag: "Edge Checks",
+                },
               ].map((provider, idx) => (
                 <ScrollReveal key={idx} delay={idx * 0.1}>
                   <div className="p-5 rounded-xl border border-zinc-850 bg-zinc-900/40 hover:border-blue-500/30 transition-all relative overflow-hidden group">
                     {/* Simulated tracer line connecting to the right */}
-                    <div className="hidden lg:block connection-trace-h w-[200px]" style={{ right: "-200px", top: "50%", animationDelay: `${idx * 1.3}s` }} />
-                    
+                    <div
+                      className="hidden lg:block connection-trace-h w-[200px]"
+                      style={{
+                        right: "-200px",
+                        top: "50%",
+                        animationDelay: `${idx * 1.3}s`,
+                      }}
+                    />
+
                     <div className="flex justify-between items-start mb-2">
-                      <h4 className="text-zinc-200 font-semibold text-sm">{provider.name}</h4>
+                      <h4 className="text-zinc-200 font-semibold text-sm">
+                        {provider.name}
+                      </h4>
                       <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-950 text-blue-400 border border-blue-900/50 font-mono">
                         {provider.tag}
                       </span>
@@ -265,7 +305,10 @@ export default function Home() {
                 <Code2 className="h-5 w-5 text-blue-500" />
               </div>
               <div className="h-20 w-px bg-zinc-800/80 relative">
-                <div className="connection-trace-v h-[40px]" style={{ animationDelay: "1s" }} />
+                <div
+                  className="connection-trace-v h-[40px]"
+                  style={{ animationDelay: "1s" }}
+                />
               </div>
             </div>
 
@@ -285,34 +328,73 @@ export default function Home() {
                       uptime-api.sh
                     </span>
                   </div>
-                  
+
                   {/* Code body */}
                   <div className="p-5 space-y-3 leading-relaxed text-zinc-400 overflow-x-auto">
                     <div className="flex gap-2">
                       <span className="text-zinc-600 select-none">$</span>
-                      <span className="text-zinc-200">curl -X GET "https://oceanuptime.com/api/cron?secret=YOUR_CRON_SECRET"</span>
+                      <span className="text-zinc-200">
+                        curl -X GET
+                        "https://oceanuptime.com/api/cron?secret=YOUR_CRON_SECRET"
+                      </span>
                     </div>
                     <div className="text-zinc-500 font-mono text-[11px]">
                       {"{"}
-                      <div className="pl-4"><span className="text-blue-400">"success"</span>: <span className="text-zinc-200">true</span>,</div>
-                      <div className="pl-4"><span className="text-blue-400">"message"</span>: <span className="text-zinc-200">"Monitoring engine executed successfully!"</span>,</div>
-                      <div className="pl-4"><span className="text-blue-400">"total_checked"</span>: <span className="text-zinc-200">3</span>,</div>
-                      <div className="pl-4"><span className="text-blue-400">"results"</span>: [</div>
-                      <div className="pl-8">{"{ "} <span className="text-blue-400">"name"</span>: <span className="text-zinc-300">"Vercel Deploy"</span>, <span className="text-blue-400">"status"</span>: <span className="text-zinc-200">"UP"</span>, <span className="text-blue-400">"responseTime"</span>: <span className="text-zinc-300">"42ms"</span> {"}"},</div>
-                      <div className="pl-8">{"{ "} <span className="text-blue-400">"name"</span>: <span className="text-zinc-300">"Netlify App"</span>, <span className="text-blue-400">"status"</span>: <span className="text-zinc-200">"UP"</span>, <span className="text-blue-400">"responseTime"</span>: <span className="text-zinc-300">"84ms"</span> {"}"},</div>
-                      <div className="pl-8">{"{ "} <span className="text-blue-400">"name"</span>: <span className="text-zinc-300">"Cloudflare Page"</span>, <span className="text-blue-400">"status"</span>: <span className="text-zinc-200">"UP"</span>, <span className="text-blue-400">"responseTime"</span>: <span className="text-zinc-300">"31ms"</span> {"}"}</div>
+                      <div className="pl-4">
+                        <span className="text-blue-400">"success"</span>:{" "}
+                        <span className="text-zinc-200">true</span>,
+                      </div>
+                      <div className="pl-4">
+                        <span className="text-blue-400">"message"</span>:{" "}
+                        <span className="text-zinc-200">
+                          "Monitoring engine executed successfully!"
+                        </span>
+                        ,
+                      </div>
+                      <div className="pl-4">
+                        <span className="text-blue-400">"total_checked"</span>:{" "}
+                        <span className="text-zinc-200">3</span>,
+                      </div>
+                      <div className="pl-4">
+                        <span className="text-blue-400">"results"</span>: [
+                      </div>
+                      <div className="pl-8">
+                        {"{ "} <span className="text-blue-400">"name"</span>:{" "}
+                        <span className="text-zinc-300">"Vercel Deploy"</span>,{" "}
+                        <span className="text-blue-400">"status"</span>:{" "}
+                        <span className="text-zinc-200">"UP"</span>,{" "}
+                        <span className="text-blue-400">"responseTime"</span>:{" "}
+                        <span className="text-zinc-300">"42ms"</span> {"}"},
+                      </div>
+                      <div className="pl-8">
+                        {"{ "} <span className="text-blue-400">"name"</span>:{" "}
+                        <span className="text-zinc-300">"Netlify App"</span>,{" "}
+                        <span className="text-blue-400">"status"</span>:{" "}
+                        <span className="text-zinc-200">"UP"</span>,{" "}
+                        <span className="text-blue-400">"responseTime"</span>:{" "}
+                        <span className="text-zinc-300">"84ms"</span> {"}"},
+                      </div>
+                      <div className="pl-8">
+                        {"{ "} <span className="text-blue-400">"name"</span>:{" "}
+                        <span className="text-zinc-300">"Cloudflare Page"</span>
+                        , <span className="text-blue-400">"status"</span>:{" "}
+                        <span className="text-zinc-200">"UP"</span>,{" "}
+                        <span className="text-blue-400">"responseTime"</span>:{" "}
+                        <span className="text-zinc-300">"31ms"</span> {"}"}
+                      </div>
                       <div className="pl-4">]</div>
                       {"}"}
                     </div>
                     <div className="flex gap-2 pt-2 border-t border-zinc-900 text-[10px] text-zinc-500">
                       <Server className="h-3.5 w-3.5 text-zinc-600" />
-                      <span>Response: 200 OK • All background checks completed</span>
+                      <span>
+                        Response: 200 OK • All background checks completed
+                      </span>
                     </div>
                   </div>
                 </div>
               </ScrollReveal>
             </div>
-
           </div>
         </section>
 
@@ -327,7 +409,8 @@ export default function Home() {
                 Everything you need to stay online
               </h2>
               <p className="text-zinc-400 max-w-xl mx-auto text-sm leading-relaxed">
-                Simple, fast, and light infrastructure checks designed to run with developer simplicity.
+                Simple, fast, and light infrastructure checks designed to run
+                with developer simplicity.
               </p>
             </div>
           </ScrollReveal>
@@ -441,7 +524,8 @@ export default function Home() {
                 Keep your services online, always.
               </h2>
               <p className="text-zinc-400 mb-8 max-w-md mx-auto relative z-10 text-xs md:text-sm leading-relaxed">
-                Join OceanUptime today and get complete, real-time visibility into your web infrastructure in seconds.
+                Join OceanUptime today and get complete, real-time visibility
+                into your web infrastructure in seconds.
               </p>
 
               <div className="relative z-10">

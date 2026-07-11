@@ -138,8 +138,8 @@ export default function OverviewClient() {
 
         if (isSomethingWrong) {
           return (
-            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400 border border-amber-100 dark:border-amber-900/20 animate-pulse">
-              SOMETHING WRONG
+            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400 border border-amber-100 dark:border-amber-900/20 animate-pulse whitespace-nowrap">
+              DEGRADED
             </span>
           );
         }
