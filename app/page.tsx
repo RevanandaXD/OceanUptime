@@ -38,6 +38,12 @@ export const metadata: Metadata = {
   },
 };
 
+const badge: String[] = [
+  "Zero active incidents",
+  "Real-time latency tracking",
+  "SSL certificates valid",
+];
+
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
@@ -61,7 +67,7 @@ const jsonLd = {
 
 export default function Home() {
   return (
-    <div className="min-h-screen flex flex-col bg-zinc-950 text-zinc-400 selection:bg-blue-500/20 selection:text-blue-300">
+    <div className="min-h-screen flex flex-col bg-[#09090b] text-zinc-400 selection:bg-blue-500/20 selection:text-blue-300">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -108,21 +114,25 @@ export default function Home() {
 
       <main className="grow flex flex-col items-center pt-28 overflow-hidden relative">
         {/* Modern grid background pattern */}
-        <div className="absolute inset-0 bg-[radial-gradient(#1f2937_1px,transparent_1px)] [background-size:24px_24px] opacity-30 pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(#27272a_1px,transparent_1px)] [background-size:32px_32px] opacity-25 pointer-events-none" />
 
-        {/* Subtle top spotlight effect */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80%] max-w-[800px] h-[350px] bg-blue-950/10 blur-[100px] rounded-full pointer-events-none" />
+        {/* Glowing Orbs */}
+        <div className="absolute top-[0%] left-[-10%] w-[800px] h-[800px] bg-indigo-600/20 blur-[120px] rounded-full mix-blend-screen pointer-events-none" />
+        <div className="absolute bottom-[0%] right-[-10%] w-[600px] h-[600px] bg-blue-600/10 blur-[120px] rounded-full mix-blend-screen pointer-events-none" />
 
         {/* --- Hero Section --- */}
         <section className="w-full max-w-7xl mx-auto px-6 pt-16 pb-20 flex flex-col items-center text-center relative z-10">
           <ScrollReveal className="flex flex-col items-center">
-            {/* Status Indicator Badge */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-zinc-800 bg-zinc-900/60 text-xs text-zinc-300 mb-6 backdrop-blur-xs">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
-              </span>
-              <span>All systems operational</span>
+            {/* Status Badge */}
+            <div className="inline-flex items-center gap-2.5 ">
+              {badge.map((badge, _) => (
+                <span
+                  key={_}
+                  className="px-3 py-1 rounded-full border border-zinc-800 bg-zinc-900/60 text-xs text-zinc-300 mb-6 backdrop-blur-xs"
+                >
+                  {badge}
+                </span>
+              ))}
             </div>
 
             <h1 className="text-4xl md:text-6xl font-sans font-bold text-zinc-50 tracking-tight leading-[1.1] mb-6 max-w-3xl">
@@ -139,7 +149,7 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row gap-3">
               <Link
                 href="/dashboard?tab=overview"
-                className="flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-sm font-semibold bg-blue-500 hover:bg-blue-600 text-zinc-950 active:scale-[0.98] transition-all shadow-md shadow-blue-500/10"
+                className="flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-sm font-semibold bg-blue-500 hover:bg-blue-600 text-white active:scale-[0.98] transition-all shadow-md shadow-blue-500/10"
               >
                 Go to Dashboard
                 <ArrowRight className="h-4 w-4" />
@@ -216,7 +226,7 @@ export default function Home() {
                       src={img.src}
                       alt={img.alt}
                       fill
-                      className="object-cover object-top transition-transform duration-500 group-hover:scale-[1.01]"
+                      className="object-contain object-top transition-transform duration-500 group-hover:scale-[1.01]"
                       sizes="(max-width: 768px) 100vw, 50vw"
                     />
                   </div>
@@ -531,7 +541,7 @@ export default function Home() {
               <div className="relative z-10">
                 <Link
                   href="/dashboard?tab=overview"
-                  className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-sm font-semibold bg-blue-500 hover:bg-blue-600 text-zinc-950 transition-colors shadow-md shadow-blue-500/10"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-sm font-semibold bg-blue-500 hover:bg-blue-600 text-white transition-colors shadow-md shadow-blue-500/10"
                 >
                   Get Started
                   <ArrowRight className="h-4 w-4" />

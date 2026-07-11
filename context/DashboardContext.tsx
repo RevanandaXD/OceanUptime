@@ -87,7 +87,6 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
-    // Initial theme load
     const savedTheme = localStorage.getItem("theme-mode") || "dark";
     applyGlobalTheme(savedTheme);
 
@@ -112,7 +111,6 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
       setIsLoadingInitialData(false);
     });
 
-    // Polling pintar: Update setiap 20 detik jika tab aktif di browser
     const INTERVAL_MS = 20000;
     const interval = setInterval(() => {
       if (document.visibilityState === "visible" && !isRefreshing) {

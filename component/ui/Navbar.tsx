@@ -37,9 +37,9 @@ export default function Navbar() {
           <Image
             src="/Logo.png"
             alt="OceanUptime Logo"
-            width={24}
-            height={24}
-            className="w-6 h-6 object-contain"
+            width={32}
+            height={32}
+            className="w-8 h-8 object-contain"
           />
           <span className="font-sans font-bold text-lg text-zinc-100 tracking-tight">
             OceanUptime
@@ -63,7 +63,7 @@ export default function Navbar() {
 
           <Link
             href="/dashboard?tab=overview"
-            className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold bg-blue-500 hover:bg-blue-600 text-zinc-950 active:scale-[0.98] transition-all shadow-md shadow-blue-500/10"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold bg-blue-500 hover:bg-blue-600 text-white active:scale-[0.98] transition-all shadow-md shadow-blue-500/10"
           >
             Dashboard
             <ArrowRight className="h-3.5 w-3.5" />

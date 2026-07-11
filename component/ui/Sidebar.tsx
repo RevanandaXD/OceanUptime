@@ -77,12 +77,12 @@ export default function Sidebar() {
               src="/Logo.png"
               width={32}
               height={32}
-              alt="logo-oceanuptime"
-              className="object-contain"
+              alt="OceanUptime Logo"
+              className="w-8 h-8 object-contain"
             />
           </div>
-          <span className="ml-3 font-heading font-extrabold text-xl text-[#77a2fc] tracking-tight opacity-0 -translate-x-2 transition-all duration-300 ease-in-out group-hover:translate-x-0 group-hover:opacity-100 whitespace-nowrap">
-            OCEAN<span className="text-[#fc808b]">UPTIME</span>
+          <span className="ml-3 font-sans font-bold text-lg text-zinc-900 dark:text-zinc-100 tracking-tight opacity-0 -translate-x-2 transition-all duration-300 ease-in-out group-hover:translate-x-0 group-hover:opacity-100 whitespace-nowrap">
+            OceanUptime
           </span>
         </Link>
       </div>
