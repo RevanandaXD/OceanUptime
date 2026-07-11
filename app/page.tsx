@@ -221,12 +221,12 @@ export default function Home() {
                       .oceanuptime.com
                     </div>
                   </div>
-                  <div className="relative aspect-video w-full overflow-hidden bg-zinc-950">
+                  <div className="relative aspect-16/10 w-full overflow-hidden bg-zinc-950">
                     <Image
                       src={img.src}
                       alt={img.alt}
                       fill
-                      className="object-contain object-top transition-transform duration-500 group-hover:scale-[1.01]"
+                      className="object-cover object-top-left transition-transform duration-500 group-hover:scale-[1.01]"
                       sizes="(max-width: 768px) 100vw, 50vw"
                     />
                   </div>
