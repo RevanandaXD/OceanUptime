@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import Navbar from "@/component/ui/Navbar";
@@ -10,67 +11,151 @@ import {
   ArrowRight,
   CheckCircle2,
   Zap,
+  Terminal,
+  Server,
+  Cloud,
+  Code2,
 } from "lucide-react";
 import Footer from "@/component/ui/Footer";
 
+export const metadata: Metadata = {
+  title: "OceanUptime - Unified Infrastructure Monitoring",
+  description: "Monitor uptime, response times, SSL validity, and deployment statuses across Vercel, Netlify, Cloudflare, and more.",
+  keywords: ["uptime monitoring", "website monitor", "SSL tracking", "server health", "deployment status", "developer tools"],
+  openGraph: {
+    title: "OceanUptime - Unified Infrastructure Monitoring",
+    description: "Monitor uptime, response times, SSL validity, and deployment statuses across Vercel, Netlify, Cloudflare, and more.",
+    type: "website",
+  }
+};
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "OceanUptime",
+  url: "https://oceanuptime.vercel.app",
+  applicationCategory: "DeveloperApplication",
+  operatingSystem: "Web",
+  description:
+    "Monitor uptime, response times, SSL validity, and deployment statuses across Vercel, Netlify, Cloudflare, and more.",
+  offers: {
+    "@type": "Offer",
+    price: "0",
+    priceCurrency: "USD",
+  },
+  author: {
+    "@type": "Organization",
+    name: "OceanUptime",
+    url: "https://oceanuptime.vercel.app",
+  },
+};
+
 export default function Home() {
   return (
-    <div className="min-h-screen flex flex-col bg-[#1a1b26] text-[#a9b1d6] selection:bg-[#7aa2f7]/30">
+    <div className="min-h-screen flex flex-col bg-zinc-950 text-zinc-400 selection:bg-blue-500/20 selection:text-blue-300">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <style dangerouslySetInnerHTML={{ __html: `
+        @keyframes trace-right {
+          0% { left: -50px; opacity: 0; }
+          10% { opacity: 1; }
+          90% { opacity: 1; }
+          100% { left: 100%; opacity: 0; }
+        }
+        @keyframes trace-down {
+          0% { top: -50px; opacity: 0; }
+          10% { opacity: 1; }
+          90% { opacity: 1; }
+          100% { top: 100%; opacity: 0; }
+        }
+        @keyframes border-glow-pulse {
+          0%, 100% { border-color: rgba(59, 130, 246, 0.2); }
+          50% { border-color: rgba(59, 130, 246, 0.6); }
+        }
+        .connection-trace-h {
+          position: absolute;
+          height: 1px;
+          background: linear-gradient(to right, transparent, #3b82f6, transparent);
+          animation: trace-right 4s linear infinite;
+        }
+        .connection-trace-v {
+          position: absolute;
+          width: 1px;
+          background: linear-gradient(to bottom, transparent, #3b82f6, transparent);
+          animation: trace-down 4s linear infinite;
+        }
+        .animated-border-glow {
+          animation: border-glow-pulse 3s ease-in-out infinite;
+        }
+      `}} />
+
       <Navbar />
 
-      <main className="grow flex flex-col items-center pt-30 overflow-hidden relative">
-        <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[80%] max-w-[800px] h-[400px] bg-[#7aa2f7]/20 blur-[120px] rounded-full pointer-events-none" />
+      <main className="grow flex flex-col items-center pt-28 overflow-hidden relative">
+        {/* Modern grid background pattern */}
+        <div className="absolute inset-0 bg-[radial-gradient(#1f2937_1px,transparent_1px)] [background-size:24px_24px] opacity-30 pointer-events-none" />
+        
+        {/* Subtle top spotlight effect */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80%] max-w-[800px] h-[350px] bg-blue-950/10 blur-[100px] rounded-full pointer-events-none" />
 
         {/* --- Hero Section --- */}
-        <section className="w-full max-w-7xl mx-auto px-6 pt-20 pb-24 flex flex-col items-center text-center relative z-10">
+        <section className="w-full max-w-7xl mx-auto px-6 pt-16 pb-20 flex flex-col items-center text-center relative z-10">
           <ScrollReveal className="flex flex-col items-center">
-            <h1 className="text-4xl md:text-6xl font-heading font-extrabold text-white tracking-tight leading-tight mb-6">
-            Monitor your infrastructure <br className="hidden md:block" />
-            <span className="text-transparent bg-clip-text bg-linear-to-r from-[#7aa2f7] to-[#bd93f9]">
-              with confidence.
-            </span>
-          </h1>
+            {/* Status Indicator Badge */}
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-zinc-800 bg-zinc-900/60 text-xs text-zinc-300 mb-6 backdrop-blur-xs">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+              </span>
+              <span>All systems operational</span>
+            </div>
 
-          <p className="text-lg md:text-xl text-[#a9b1d6] max-w-2xl mb-10 font-medium">
-            A unified dashboard for tracking uptime, response times, SSL
-            certificates, and deployments across all your providers.
-          </p>
+            <h1 className="text-4xl md:text-6xl font-sans font-bold text-zinc-50 tracking-tight leading-[1.1] mb-6 max-w-3xl">
+              Developer-First <br className="hidden sm:block" />
+              Infrastructure Monitoring
+            </h1>
 
-          <div className="flex flex-col sm:flex-row gap-4">
-            <Link
-              href="/dashboard?tab=overview"
-              className="flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl font-bold bg-[#7aa2f7] text-[#16161e] hover:bg-[#7aa2f7]/90 active:scale-[0.98] transition-all shadow-lg shadow-[#7aa2f7]/20"
-            >
-              Start Monitoring
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-            <Link
-              href="#features"
-              className="flex items-center justify-center px-8 py-3.5 rounded-xl font-bold text-white glass-panel hover:bg-white/5 active:scale-[0.98] transition-all"
-            >
-              View Features
-            </Link>
-          </div>
+            <p className="text-base md:text-lg text-zinc-400 max-w-2xl mb-8 leading-relaxed">
+              A unified, developer-friendly dashboard to track website uptime, latency performance, SSL certificate validity, and live build deployments across Vercel, Netlify, and Cloudflare.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Link
+                href="/dashboard?tab=overview"
+                className="flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-sm font-semibold bg-blue-500 hover:bg-blue-600 text-zinc-950 active:scale-[0.98] transition-all shadow-md shadow-blue-500/10"
+              >
+                Go to Dashboard
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link
+                href="#features"
+                className="flex items-center justify-center px-6 py-3 rounded-lg text-sm font-semibold border border-zinc-800 hover:border-zinc-700 bg-zinc-900/40 hover:bg-zinc-900/80 text-zinc-300 active:scale-[0.98] transition-all"
+              >
+                Explore Features
+              </Link>
+            </div>
           </ScrollReveal>
         </section>
 
-        {/* Overview */}
+        {/* --- Showcase / Overview Section --- */}
         <section
           id="overview"
-          className="w-full max-w-7xl mx-auto px-6 pt-25 relative z-10"
+          className="w-full max-w-7xl mx-auto px-6 py-12 scroll-mt-24 relative z-10"
         >
           <ScrollReveal delay={0.1}>
             <div className="text-center mb-16">
-              <h2 className="text-3xl font-heading font-bold text-white mb-4">
-              See It in Action
-            </h2>
-            <p className="text-[#a9b1d6] max-w-xl mx-auto font-medium">
-              Dapatkan gambaran nyata bagaimana dashboard interaktif OceanUptime
-              melacak performa infrastruktur Anda.
-            </p>
-          </div>
+              <h2 className="text-2xl md:text-3xl font-sans font-bold text-zinc-100 mb-4">
+                Designed for Developer Workflows
+              </h2>
+              <p className="text-zinc-400 max-w-xl mx-auto text-sm leading-relaxed">
+                OceanUptime monitors everything and outputs clean status updates, making infrastructure tracking effortless.
+              </p>
+            </div>
           </ScrollReveal>
-          <div className="w-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 relative z-20 px-4 mb-12">
+
+          <div className="w-full max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 relative z-20 px-2 mb-12">
             {[
               {
                 src: "/images/DashboardPreview.png",
@@ -98,55 +183,153 @@ export default function Home() {
               },
             ].map((img, i) => (
               <ScrollReveal key={i} delay={0.1 * i} className="h-full">
-                <div
-                  className="group relative h-full rounded-2xl overflow-hidden border border-[#2f3549]/50 bg-[#1f2335] hover:border-[#7aa2f7]/40 hover:shadow-2xl hover:shadow-[#7aa2f7]/5 transition-all duration-300"
-                >
-                <div className="flex items-center gap-2 px-4 py-2.5 bg-[#16161e] border-b border-[#2f3549]/50">
-                  <div className="flex gap-1.5">
-                    <div className="w-2.5 h-2.5 rounded-full bg-red-500/80"></div>
-                    <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/80"></div>
-                    <div className="w-2.5 h-2.5 rounded-full bg-green-500/80"></div>
+                <div className="group relative h-full rounded-xl overflow-hidden border border-zinc-800/80 bg-zinc-900/20 hover:border-zinc-700/80 transition-all duration-300">
+                  <div className="flex items-center gap-2 px-4 py-2.5 bg-zinc-900 border-b border-zinc-800">
+                    <div className="flex gap-1.5">
+                      <div className="w-2.5 h-2.5 rounded-full bg-zinc-800 border border-zinc-700"></div>
+                      <div className="w-2.5 h-2.5 rounded-full bg-zinc-800 border border-zinc-700"></div>
+                      <div className="w-2.5 h-2.5 rounded-full bg-zinc-800 border border-zinc-700"></div>
+                    </div>
+                    <div className="mx-auto text-[10px] font-mono text-zinc-500 tracking-wider">
+                      {img.alt.toLowerCase().replace(/\s+/g, "-")}
+                      .oceanuptime.com
+                    </div>
                   </div>
-                  <div className="mx-auto text-[10px] font-semibold text-[#a9b1d6]/40 tracking-wider">
-                    {img.alt.toLowerCase().replace(/\s+/g, "-")}.oceanuptime.com
+                  <div className="relative aspect-video w-full overflow-hidden bg-zinc-950">
+                    <Image
+                      src={img.src}
+                      alt={img.alt}
+                      fill
+                      className="object-cover object-top transition-transform duration-500 group-hover:scale-[1.01]"
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                    />
+                  </div>
+                  <div className="p-5 border-t border-zinc-800 bg-zinc-900/40">
+                    <h4 className="font-semibold text-zinc-200 text-sm mb-1.5">
+                      {img.title}
+                    </h4>
+                    <p className="text-xs text-zinc-400 leading-relaxed">{img.desc}</p>
                   </div>
                 </div>
-                <div className="relative aspect-video w-full overflow-hidden bg-[#1a1b26]">
-                  <Image
-                    src={img.src}
-                    alt={img.alt}
-                    fill
-                    className="object-contain object-tc center transition-transform duration-500"
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                  />
-                </div>
-                <div className="p-4 border-t border-[#2f3549]/30 bg-[#1a1b26]/80 backdrop-blur-xs">
-                  <h4 className="font-bold text-white text-base mb-1">
-                    {img.title}
-                  </h4>
-                  <p className="text-xs text-[#a9b1d6]/80">{img.desc}</p>
-                </div>
-              </div>
               </ScrollReveal>
             ))}
+          </div>
+        </section>
+
+        {/* --- NEW SECTION: Integrations & Developer Hub --- */}
+        <section
+          id="integrations"
+          className="w-full max-w-7xl mx-auto px-6 py-20 border-t border-zinc-900 relative z-10"
+        >
+          <ScrollReveal delay={0.1}>
+            <div className="text-center mb-16">
+              <h2 className="text-2xl md:text-3xl font-sans font-bold text-zinc-100 mb-4">
+                Integrate Anywhere In Your Stack
+              </h2>
+              <p className="text-zinc-400 max-w-xl mx-auto text-sm leading-relaxed">
+                Connect your cloud providers in seconds and receive raw structured JSON statuses or triggers directly in your build pipelines.
+              </p>
+            </div>
+          </ScrollReveal>
+
+          {/* Grid Layout connecting APIs to a central Monitor Terminal */}
+          <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative">
+            
+            {/* Left Column: Cloud Providers (Col Span 5) */}
+            <div className="lg:col-span-5 space-y-4 relative">
+              {[
+                { name: "Vercel Integrations", desc: "Sync deployment logs & verify status checks.", tag: "API Syncing" },
+                { name: "Netlify Webhooks", desc: "Instantly detect new deploys and test availability.", tag: "Automatic" },
+                { name: "Cloudflare Pages", desc: "Track latency and domain health edge-wide.", tag: "Edge Checks" }
+              ].map((provider, idx) => (
+                <ScrollReveal key={idx} delay={idx * 0.1}>
+                  <div className="p-5 rounded-xl border border-zinc-850 bg-zinc-900/40 hover:border-blue-500/30 transition-all relative overflow-hidden group">
+                    {/* Simulated tracer line connecting to the right */}
+                    <div className="hidden lg:block connection-trace-h w-[200px]" style={{ right: "-200px", top: "50%", animationDelay: `${idx * 1.3}s` }} />
+                    
+                    <div className="flex justify-between items-start mb-2">
+                      <h4 className="text-zinc-200 font-semibold text-sm">{provider.name}</h4>
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-950 text-blue-400 border border-blue-900/50 font-mono">
+                        {provider.tag}
+                      </span>
+                    </div>
+                    <p className="text-xs text-zinc-500">{provider.desc}</p>
+                  </div>
+                </ScrollReveal>
+              ))}
+            </div>
+
+            {/* Middle Connection Point (Col Span 2 - Desktop Only) */}
+            <div className="hidden lg:flex lg:col-span-2 flex-col items-center justify-center relative h-full">
+              <div className="w-10 h-10 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center animated-border-glow">
+                <Code2 className="h-5 w-5 text-blue-500" />
+              </div>
+              <div className="h-20 w-px bg-zinc-800/80 relative">
+                <div className="connection-trace-v h-[40px]" style={{ animationDelay: "1s" }} />
+              </div>
+            </div>
+
+            {/* Right Column: Code Terminal Log (Col Span 5) */}
+            <div className="lg:col-span-5">
+              <ScrollReveal delay={0.2}>
+                <div className="rounded-xl border border-zinc-800 bg-[#09090b] shadow-2xl overflow-hidden font-mono text-xs">
+                  {/* Window Bar */}
+                  <div className="flex items-center justify-between px-4 py-3 bg-zinc-900 border-b border-zinc-800">
+                    <div className="flex gap-2">
+                      <div className="w-3 h-3 rounded-full bg-zinc-800"></div>
+                      <div className="w-3 h-3 rounded-full bg-zinc-800"></div>
+                      <div className="w-3 h-3 rounded-full bg-zinc-800"></div>
+                    </div>
+                    <span className="text-[10px] text-zinc-500 font-medium select-none flex items-center gap-1.5">
+                      <Terminal className="h-3.5 w-3.5 text-blue-500" />
+                      uptime-api.sh
+                    </span>
+                  </div>
+                  
+                  {/* Code body */}
+                  <div className="p-5 space-y-3 leading-relaxed text-zinc-400 overflow-x-auto">
+                    <div className="flex gap-2">
+                      <span className="text-zinc-600 select-none">$</span>
+                      <span className="text-zinc-200">curl -X GET "https://oceanuptime.com/api/cron?secret=YOUR_CRON_SECRET"</span>
+                    </div>
+                    <div className="text-zinc-500 font-mono text-[11px]">
+                      {"{"}
+                      <div className="pl-4"><span className="text-blue-400">"success"</span>: <span className="text-zinc-200">true</span>,</div>
+                      <div className="pl-4"><span className="text-blue-400">"message"</span>: <span className="text-zinc-200">"Monitoring engine executed successfully!"</span>,</div>
+                      <div className="pl-4"><span className="text-blue-400">"total_checked"</span>: <span className="text-zinc-200">3</span>,</div>
+                      <div className="pl-4"><span className="text-blue-400">"results"</span>: [</div>
+                      <div className="pl-8">{"{ "} <span className="text-blue-400">"name"</span>: <span className="text-zinc-300">"Vercel Deploy"</span>, <span className="text-blue-400">"status"</span>: <span className="text-zinc-200">"UP"</span>, <span className="text-blue-400">"responseTime"</span>: <span className="text-zinc-300">"42ms"</span> {"}"},</div>
+                      <div className="pl-8">{"{ "} <span className="text-blue-400">"name"</span>: <span className="text-zinc-300">"Netlify App"</span>, <span className="text-blue-400">"status"</span>: <span className="text-zinc-200">"UP"</span>, <span className="text-blue-400">"responseTime"</span>: <span className="text-zinc-300">"84ms"</span> {"}"},</div>
+                      <div className="pl-8">{"{ "} <span className="text-blue-400">"name"</span>: <span className="text-zinc-300">"Cloudflare Page"</span>, <span className="text-blue-400">"status"</span>: <span className="text-zinc-200">"UP"</span>, <span className="text-blue-400">"responseTime"</span>: <span className="text-zinc-300">"31ms"</span> {"}"}</div>
+                      <div className="pl-4">]</div>
+                      {"}"}
+                    </div>
+                    <div className="flex gap-2 pt-2 border-t border-zinc-900 text-[10px] text-zinc-500">
+                      <Server className="h-3.5 w-3.5 text-zinc-600" />
+                      <span>Response: 200 OK • All background checks completed</span>
+                    </div>
+                  </div>
+                </div>
+              </ScrollReveal>
+            </div>
+
           </div>
         </section>
 
         {/* --- Features Section --- */}
         <section
           id="features"
-          className="w-full max-w-7xl mx-auto px-6 py-24 relative z-10 border-t border-[#2f3549]/50"
+          className="w-full max-w-7xl mx-auto px-6 py-20 scroll-mt-24 relative z-10 border-t border-zinc-900"
         >
           <ScrollReveal delay={0.1}>
             <div className="text-center mb-16">
-              <h2 className="text-3xl font-heading font-bold text-white mb-4">
-              Everything you need to stay online
-            </h2>
-            <p className="text-[#a9b1d6] max-w-xl mx-auto">
-              Powerful monitoring tools packaged in a beautiful, easy-to-use
-              interface.
-            </p>
-          </div>
+              <h2 className="text-2xl md:text-3xl font-sans font-bold text-zinc-100 mb-4">
+                Everything you need to stay online
+              </h2>
+              <p className="text-zinc-400 max-w-xl mx-auto text-sm leading-relaxed">
+                Simple, fast, and light infrastructure checks designed to run with developer simplicity.
+              </p>
+            </div>
           </ScrollReveal>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -183,19 +366,17 @@ export default function Home() {
               },
             ].map((feature, idx) => (
               <ScrollReveal key={idx} delay={0.1 * idx} className="h-full">
-                <div
-                  className="glass-panel h-full p-6 rounded-2xl border border-[#2f3549]/50 hover:border-[#7aa2f7]/50 transition-colors group"
-                >
-                <div className="w-12 h-12 rounded-xl bg-[#1f2335] flex items-center justify-center mb-4 border border-[#2f3549] group-hover:bg-[#7aa2f7]/10 group-hover:border-[#7aa2f7]/30 transition-colors">
-                  <feature.icon className="h-6 w-6 text-[#7aa2f7]" />
+                <div className="h-full p-6 rounded-xl border border-zinc-800 bg-zinc-900/20 hover:border-zinc-700/80 transition-colors group">
+                  <div className="w-10 h-10 rounded-lg bg-zinc-900 flex items-center justify-center mb-4 border border-zinc-800 group-hover:border-zinc-700 transition-colors">
+                    <feature.icon className="h-5 w-5 text-blue-500" />
+                  </div>
+                  <h3 className="text-sm font-semibold text-zinc-200 mb-2">
+                    {feature.title}
+                  </h3>
+                  <p className="text-xs text-zinc-400 leading-relaxed">
+                    {feature.desc}
+                  </p>
                 </div>
-                <h3 className="text-lg font-bold text-white mb-2">
-                  {feature.title}
-                </h3>
-                <p className="text-sm text-[#a9b1d6] leading-relaxed">
-                  {feature.desc}
-                </p>
-              </div>
               </ScrollReveal>
             ))}
           </div>
@@ -204,20 +385,20 @@ export default function Home() {
         {/* --- FAQ Section --- */}
         <section
           id="faq"
-          className="w-full max-w-4xl mx-auto px-6 py-24 relative z-10 border-t border-[#2f3549]/50"
+          className="w-full max-w-4xl mx-auto px-6 py-20 scroll-mt-24 relative z-10 border-t border-zinc-900"
         >
           <ScrollReveal delay={0.1}>
             <div className="text-center mb-16">
-              <h2 className="text-3xl font-heading font-bold text-white mb-4">
-              Frequently Asked Questions
-            </h2>
-            <p className="text-[#a9b1d6] max-w-xl mx-auto">
-              Have questions about OceanUptime? We have answers.
-            </p>
-          </div>
+              <h2 className="text-2xl md:text-3xl font-sans font-bold text-zinc-100 mb-4">
+                Frequently Asked Questions
+              </h2>
+              <p className="text-zinc-400 max-w-xl mx-auto text-sm leading-relaxed">
+                Have questions about OceanUptime? We have answers.
+              </p>
+            </div>
           </ScrollReveal>
 
-          <div className="space-y-6">
+          <div className="space-y-4">
             {[
               {
                 q: "What is OceanUptime?",
@@ -237,54 +418,42 @@ export default function Home() {
               },
             ].map((faq, idx) => (
               <ScrollReveal key={idx} delay={0.1 * idx}>
-                <div
-                  className="glass-panel p-6 rounded-2xl border border-[#2f3549]/50 hover:border-[#7aa2f7]/30 transition-all"
-                >
-                <h3 className="text-lg font-bold text-white mb-2 flex items-start gap-3">
-                  <span className="text-[#7aa2f7]">Q:</span>
-                  <span>{faq.q}</span>
-                </h3>
-                <p className="text-sm text-[#a9b1d6] leading-relaxed pl-6">
-                  {faq.a}
-                </p>
-              </div>
+                <div className="p-6 rounded-xl border border-zinc-800 bg-zinc-900/20 hover:border-zinc-700/60 transition-all">
+                  <h3 className="text-sm font-semibold text-zinc-200 mb-2 flex items-start gap-3">
+                    <span className="text-blue-500 font-mono">Q:</span>
+                    <span>{faq.q}</span>
+                  </h3>
+                  <p className="text-xs text-zinc-400 leading-relaxed pl-6">
+                    {faq.a}
+                  </p>
+                </div>
               </ScrollReveal>
             ))}
           </div>
         </section>
 
         {/* --- CTA Section --- */}
-        <section className="w-full max-w-4xl mx-auto px-6 py-24 relative z-10 text-center">
+        <section className="w-full max-w-4xl mx-auto px-6 py-20 relative z-10 text-center">
           <ScrollReveal delay={0.2}>
-            <div className="group relative p-12 rounded-3xl border border-[#7aa2f7]/20 bg-[#1e2230]/40 backdrop-blur-md overflow-hidden transition-all duration-300 hover:border-[#7aa2f7]/40 hover:shadow-2xl hover:shadow-[#7aa2f7]/5">
-            {/* Background Decorative Grid */}
-            <div className="absolute inset-0 opacity-[0.03] mix-blend-overlay pointer-events-none bg-[radial-gradient(#a9b1d6_1px,transparent_1px)] [background-size:20px_20px]" />
+            <div className="group relative p-10 rounded-2xl border border-zinc-800 bg-zinc-900/30 overflow-hidden transition-all duration-300">
+              {/* Content */}
+              <h2 className="text-2xl md:text-3xl font-sans font-bold text-zinc-100 mb-4 relative z-10 tracking-tight leading-tight">
+                Keep your services online, always.
+              </h2>
+              <p className="text-zinc-400 mb-8 max-w-md mx-auto relative z-10 text-xs md:text-sm leading-relaxed">
+                Join OceanUptime today and get complete, real-time visibility into your web infrastructure in seconds.
+              </p>
 
-            <div className="absolute -top-24 -left-24 w-56 h-56 bg-[#7aa2f7]/15 blur-[80px] rounded-full pointer-events-none transition-transform duration-700 group-hover:scale-125" />
-            <div className="absolute -bottom-24 -right-24 w-56 h-56 bg-[#bd93f9]/15 blur-[80px] rounded-full pointer-events-none transition-transform duration-700 group-hover:scale-125" />
-
-            {/* Content */}
-            <h2 className="text-3xl md:text-5xl font-heading font-extrabold text-white mb-6 relative z-10 tracking-tight leading-tight">
-              Keep your services <br className="sm:hidden" />
-              <span className="text-transparent bg-clip-text bg-linear-to-r from-[#7aa2f7] to-[#bd93f9]">
-                online, always.
-              </span>
-            </h2>
-            <p className="text-[#a9b1d6] mb-8 max-w-md mx-auto relative z-10 text-sm md:text-base font-medium">
-              Join OceanUptime today and get complete, real-time visibility into
-              your web infrastructure in seconds.
-            </p>
-
-            <div className="relative z-10">
-              <Link
-                href="/dashboard?tab=overview"
-                className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl font-bold bg-[#7aa2f7] text-[#16161e]"
-              >
-                Go to Dashboard
-                <ArrowRight className="h-4 w-4" />
-              </Link>
+              <div className="relative z-10">
+                <Link
+                  href="/dashboard?tab=overview"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-sm font-semibold bg-blue-500 hover:bg-blue-600 text-zinc-950 transition-colors shadow-md shadow-blue-500/10"
+                >
+                  Get Started
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
             </div>
-          </div>
           </ScrollReveal>
         </section>
       </main>

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import tls from "tls";
 
-export const dynamic = 'force-dynamic'; // Selalu eksekusi, jangan di-cache
+export const dynamic = 'force-dynamic'; 
 
 function checkSSL(urlStr: string): Promise<{ issuer: string | string[]; expiresAt: string; daysRemaining: number }> {
   return new Promise((resolve) => {
@@ -74,17 +74,13 @@ export async function GET(request: Request) {
   const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
   const supabase = createClient(supabaseUrl, supabaseKey);
 
-  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
-    console.warn("WARNING: SUPABASE_SERVICE_ROLE_KEY tidak ditemukan di .env. Insert data mungkin akan gagal karena RLS.");
-  }
-
   const { data: websites, error: fetchError } = await supabase
     .from("websites")
     .select("id, url, name, expected_keyword")
     .eq("is_active", true);
 
   if (fetchError || !websites) {
-    return NextResponse.json({ error: "Gagal mengambil daftar website dari database" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to Get Data from Database" }, { status: 500 });
   }
 
   const checkPromises = websites.map(async (web) => {
@@ -125,41 +121,113 @@ export async function GET(request: Request) {
           try {
             const htmlText = await response.text();
             const bodySize = htmlText.length;
-            
-            if (bodySize < 1000 && htmlText.trim() === "") {
+            const strippedText = htmlText.replace(/<[^>]*>/g, "").trim();
+            const textLength = strippedText.length;
+
+            if (bodySize < 1000 && textLength === 0) {
               status = "SOMETHING WRONG";
               failureReason = "Blank page detected (Empty HTML body)";
             } else {
-              const errorKeywords = [
-                "database connection error",
-                "failed to connect to database",
-                "error connecting to database",
-                "prisma client error",
-                "react-error-boundary",
-                "something went wrong",
-                "application error: a client-side exception has occurred"
+              const emptyShellPatterns = [
+                /<div\s+id=["'](__next|root|app|__nuxt|__gatsby|___gatsby|site)["']\s*>\s*<\/div>/i,
+                /<div\s+id=["'](__next|root|app)["']\s*\/?>\s*<\/div>/i,
+                /<div\s+id=["']root["']\s*>\s*<\/div>\s*<script/i,
+                /<!--\s*(?:Next|Nuxt|Gatsby|React|Vue)\s*-->/i,
               ];
-              
-              const foundError = errorKeywords.find(keyword => 
-                htmlText.toLowerCase().includes(keyword)
-              );
-              
-              if (foundError) {
+
+              const bodyMatch = htmlText.match(/<body[^>]*>([\s\S]*)<\/body>/i);
+              const bodyContent = bodyMatch ? bodyMatch[1] : htmlText;
+              const bodyText = bodyContent.replace(/<[^>]*>/g, "").trim();
+              const totalScriptCount = (htmlText.match(/<script[\s>]/gi) || []).length;
+
+              const isDeadShell = emptyShellPatterns.some(pattern => pattern.test(htmlText));
+
+              const isMetaOnlyPage = bodyText.length < 50 && totalScriptCount >= 1 && bodySize > 1000;
+
+              const contentRatio = bodySize > 0 ? textLength / bodySize : 0;
+              const hasOnlyScriptTags = textLength < 50 && /<script[\s>]/i.test(htmlText) && contentRatio < 0.05;
+
+              if (isDeadShell) {
                 status = "SOMETHING WRONG";
-                failureReason = `System error signature found: "${foundError}"`;
-              } else if (web.expected_keyword) {
-                const keywords = web.expected_keyword
-                  .split(",")
-                  .map((k: string) => k.trim().toLowerCase())
-                  .filter(Boolean);
-                
-                const foundKeywords = keywords.filter((k: string) => 
-                  htmlText.toLowerCase().includes(k)
+                failureReason = "Empty SPA shell detected (possible database/sleep issue)";
+              } else if (isMetaOnlyPage) {
+                status = "SOMETHING WRONG";
+                failureReason = "SPA shell with no body content (database likely sleeping)";
+              } else if (bodySize > 500 && textLength < 20 && hasOnlyScriptTags) {
+                status = "SOMETHING WRONG";
+                failureReason = "Dead page detected (only scripts, no visible content)";
+              } else {
+                const errorKeywords = [
+                  "database connection error",
+                  "failed to connect to database",
+                  "error connecting to database",
+                  "could not connect to the database",
+                  "connection to database server failed",
+                  "prisma client error",
+                  "prismaerror",
+                  "react-error-boundary",
+                  "errorboundary",
+                  "something went wrong",
+                  "an unexpected error has occurred",
+                  "application error: a client-side exception has occurred",
+                  "application error: a server-side exception has occurred",
+                  "project is paused",
+                  "this project has been paused",
+                  "your project has been paused",
+                  "500 internal server error",
+                  "502 bad gateway",
+                  "503 service unavailable",
+                  "504 gateway timeout",
+                  "connection refused",
+                  "fetch failed",
+                  "supabase",
+                  "databaseerror",
+                  "econnrefused",
+                  "econnreset",
+                  "etimedout",
+                  "unable to connect",
+                  "service unavailable",
+                  "bad gateway",
+                  "upstream error",
+                  "worker exited",
+                  "cold start",
+                  "function invocation timeout",
+                  "runtime exited",
+                  "module not found",
+                  "cannot find module",
+                  "referenceerror",
+                  "typeerror: cannot read",
+                  "err_name_not_resolved",
+                  "net::err_",
+                  "uncaught typeerror",
+                  "uncaught referenceerror",
+                  "unhandledrejection",
+                  "loading chunk",
+                  "loading css chunk",
+                ];
+
+                const bodyLower = htmlText.toLowerCase();
+                const foundError = errorKeywords.find(keyword =>
+                  bodyLower.includes(keyword)
                 );
-                
-                if (foundKeywords.length === 0) {
+
+                if (foundError) {
                   status = "SOMETHING WRONG";
-                  failureReason = `None of the expected keywords (${web.expected_keyword}) were found on the page`;
+                  failureReason = `System error signature found: "${foundError}"`;
+                } else if (web.expected_keyword) {
+                  const keywords = web.expected_keyword
+                    .split(",")
+                    .map((k: string) => k.trim().toLowerCase())
+                    .filter(Boolean);
+
+                  const foundKeywords = keywords.filter((k: string) =>
+                    bodyLower.includes(k)
+                  );
+
+                  if (foundKeywords.length === 0) {
+                    status = "SOMETHING WRONG";
+                    failureReason = `None of the expected keywords (${web.expected_keyword}) were found on the page`;
+                  }
                 }
               }
             }
@@ -188,7 +256,7 @@ export async function GET(request: Request) {
     });
     
     if (insertError) {
-      console.error(`Gagal menyimpan ping untuk ${web.name}:`, insertError);
+      console.error(`Failed to save check result for ${web.name}:`, insertError);
     }
 
     try {
@@ -218,7 +286,7 @@ export async function GET(request: Request) {
         });
       }
     } catch (sslErr) {
-      console.error(`Gagal menyimpan SSL untuk ${web.name}:`, sslErr);
+      console.error(`Failed to save SSL info for ${web.name}:`, sslErr);
     }
 
     if (status === "DOWN" || status === "SOMETHING WRONG") {
@@ -233,7 +301,7 @@ export async function GET(request: Request) {
         await supabase.from("incidents").insert({
           website_id: web.id,
           status,
-          reason: failureReason || `Pengecekan gagal (HTTP Code: ${statusCode})`
+          reason: failureReason || `Check failed (HTTP Code: ${statusCode})`
         });
       }
     } else if (status === "UP") {
@@ -265,7 +333,7 @@ export async function GET(request: Request) {
 
   return NextResponse.json({
     success: true,
-    message: "Mesin monitoring berhasil dijalankan!",
+    message: "Monitoring engine executed successfully!",
     total_checked: results.length,
     results,
   });

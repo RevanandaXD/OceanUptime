@@ -1,64 +1,110 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
-import { Activity, ArrowRight } from "lucide-react";
+import Image from "next/image";
+import { usePathname, useRouter } from "next/navigation";
+import { ArrowRight, Menu, X } from "lucide-react";
 
 export default function Navbar() {
-  const handleScroll = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
+  const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
+  const router = useRouter();
+
+  const handleNavigation = (id: string) => {
+    setIsOpen(false);
+    if (pathname === "/") {
+      const element = document.getElementById(id);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
+    } else {
+      router.push(`/#${id}`);
     }
   };
 
+  const navItems = [
+    { label: "Overview", id: "overview" },
+    { label: "Features", id: "features" },
+    { label: "FAQ", id: "faq" },
+  ];
+
   return (
-    <nav className="fixed top-0 left-0 right-0 h-16 backdrop-blur-md bg-[#1a1b26]/75 border-b border-[#2f3549]/50 z-50 transition-all duration-300">
+    <nav className="fixed top-4 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-7xl h-16 rounded-2xl border border-zinc-800 bg-zinc-950/80 backdrop-blur-md z-50 transition-all duration-300 shadow-xl shadow-black/20">
       <div className="max-w-7xl h-full mx-auto px-6 flex items-center justify-between">
         {/* Brand Logo */}
-        <Link href="/" className="flex items-center gap-2.5 group">
-          <span className="font-heading font-extrabold text-xl text-[#77a2fc] tracking-tight">
-            OCEAN<span className="text-[#fc808b]">UPTIME</span>
+        <Link href="/" className="flex items-center gap-2 group">
+          <Image
+            src="/Logo.png"
+            alt="OceanUptime Logo"
+            width={24}
+            height={24}
+            className="w-6 h-6 object-contain"
+          />
+          <span className="font-sans font-bold text-lg text-zinc-100 tracking-tight">
+            OceanUptime
           </span>
         </Link>
 
-        {/* Navigation Items */}
-        <div className="flex items-center gap-6">
-          <ul className="hidden md:flex items-center gap-6 text-xs font-semibold text-[#a9b1d6]">
-            <li>
-              <button
-                onClick={() => handleScroll("overview")}
-                className="hover:text-white transition-colors cursor-pointer bg-transparent border-none p-0"
-              >
-                Overview
-              </button>
-            </li>
-            <li>
-              <button
-                onClick={() => handleScroll("features")}
-                className="hover:text-white transition-colors cursor-pointer bg-transparent border-none p-0"
-              >
-                Features
-              </button>
-            </li>
-            <li>
-              <button
-                onClick={() => handleScroll("faq")}
-                className="hover:text-white transition-colors cursor-pointer bg-transparent border-none p-0"
-              >
-                FAQ
-              </button>
-            </li>
+        {/* Navigation Items (Desktop) */}
+        <div className="hidden md:flex items-center gap-6">
+          <ul className="flex items-center gap-6 text-xs font-semibold text-zinc-400">
+            {navItems.map((item) => (
+              <li key={item.id}>
+                <button
+                  onClick={() => handleNavigation(item.id)}
+                  className="hover:text-zinc-100 transition-colors cursor-pointer bg-transparent border-none p-0 relative py-1 after:absolute after:bottom-0 after:left-0 after:h-[1px] after:w-0 hover:after:w-full after:bg-blue-500 after:transition-all"
+                >
+                  {item.label}
+                </button>
+              </li>
+            ))}
           </ul>
 
           <Link
             href="/dashboard?tab=overview"
-            className="flex items-center gap-1.5 px-4.5 py-2 rounded-lg text-xs font-bold bg-[#7aa2f7] text-[#16161e] hover:bg-[#7aa2f7]/90 active:scale-[0.98] transition-all shadow-md shadow-[#7aa2f7]/10"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold bg-blue-500 hover:bg-blue-600 text-zinc-950 active:scale-[0.98] transition-all shadow-md shadow-blue-500/10"
           >
             Dashboard
-            <ArrowRight className="h-3 w-3" />
+            <ArrowRight className="h-3.5 w-3.5" />
           </Link>
         </div>
+
+        {/* Toggle Button (Mobile) */}
+        <div className="flex md:hidden items-center gap-3">
+          <Link
+            href="/dashboard?tab=overview"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-bold bg-blue-500 hover:bg-blue-600 text-zinc-950 transition-all"
+          >
+            Dashboard
+          </Link>
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="text-zinc-400 hover:text-white transition-colors focus:outline-none"
+            aria-label="Toggle menu"
+          >
+            {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+        </div>
       </div>
+
+      {/* Mobile Menu Panel */}
+      {isOpen && (
+        <div className="absolute top-18 left-0 right-0 p-4 rounded-2xl border border-zinc-800 bg-zinc-950/95 backdrop-blur-lg flex flex-col gap-4 md:hidden shadow-2xl animate-in fade-in slide-in-from-top-5 duration-200 z-50">
+          <ul className="flex flex-col gap-3 p-2 text-sm font-semibold text-zinc-400">
+            {navItems.map((item) => (
+              <li key={item.id}>
+                <button
+                  onClick={() => handleNavigation(item.id)}
+                  className="w-full text-left py-2 hover:text-white transition-colors cursor-pointer bg-transparent border-none"
+                >
+                  {item.label}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </nav>
   );
 }
