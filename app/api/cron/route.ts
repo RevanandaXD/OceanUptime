@@ -128,106 +128,76 @@ export async function GET(request: Request) {
               status = "SOMETHING WRONG";
               failureReason = "Blank page detected (Empty HTML body)";
             } else {
-              const emptyShellPatterns = [
-                /<div\s+id=["'](__next|root|app|__nuxt|__gatsby|___gatsby|site)["']\s*>\s*<\/div>/i,
-                /<div\s+id=["'](__next|root|app)["']\s*\/?>\s*<\/div>/i,
-                /<div\s+id=["']root["']\s*>\s*<\/div>\s*<script/i,
-                /<!--\s*(?:Next|Nuxt|Gatsby|React|Vue)\s*-->/i,
+              const errorKeywords = [
+                "database connection error",
+                "failed to connect to database",
+                "error connecting to database",
+                "could not connect to the database",
+                "connection to database server failed",
+                "prisma client error",
+                "prismaerror",
+                "react-error-boundary",
+                "errorboundary",
+                "something went wrong",
+                "an unexpected error has occurred",
+                "application error: a client-side exception has occurred",
+                "application error: a server-side exception has occurred",
+                "project is paused",
+                "this project has been paused",
+                "your project has been paused",
+                "500 internal server error",
+                "502 bad gateway",
+                "503 service unavailable",
+                "504 gateway timeout",
+                "connection refused",
+                "fetch failed",
+                "supabase",
+                "databaseerror",
+                "econnrefused",
+                "econnreset",
+                "etimedout",
+                "unable to connect",
+                "service unavailable",
+                "bad gateway",
+                "upstream error",
+                "worker exited",
+                "cold start",
+                "function invocation timeout",
+                "runtime exited",
+                "module not found",
+                "cannot find module",
+                "referenceerror",
+                "typeerror: cannot read",
+                "err_name_not_resolved",
+                "net::err_",
+                "uncaught typeerror",
+                "uncaught referenceerror",
+                "unhandledrejection",
+                "loading chunk",
+                "loading css chunk",
               ];
 
-              const bodyMatch = htmlText.match(/<body[^>]*>([\s\S]*)<\/body>/i);
-              const bodyContent = bodyMatch ? bodyMatch[1] : htmlText;
-              const bodyText = bodyContent.replace(/<[^>]*>/g, "").trim();
-              const totalScriptCount = (htmlText.match(/<script[\s>]/gi) || []).length;
+              const bodyLower = htmlText.toLowerCase();
+              const foundError = errorKeywords.find(keyword =>
+                bodyLower.includes(keyword)
+              );
 
-              const isDeadShell = emptyShellPatterns.some(pattern => pattern.test(htmlText));
-
-              const isMetaOnlyPage = bodyText.length < 50 && totalScriptCount >= 1 && bodySize > 1000;
-
-              const contentRatio = bodySize > 0 ? textLength / bodySize : 0;
-              const hasOnlyScriptTags = textLength < 50 && /<script[\s>]/i.test(htmlText) && contentRatio < 0.05;
-
-              if (isDeadShell) {
+              if (foundError) {
                 status = "SOMETHING WRONG";
-                failureReason = "Empty SPA shell detected (possible database/sleep issue)";
-              } else if (isMetaOnlyPage) {
-                status = "SOMETHING WRONG";
-                failureReason = "SPA shell with no body content (database likely sleeping)";
-              } else if (bodySize > 500 && textLength < 20 && hasOnlyScriptTags) {
-                status = "SOMETHING WRONG";
-                failureReason = "Dead page detected (only scripts, no visible content)";
-              } else {
-                const errorKeywords = [
-                  "database connection error",
-                  "failed to connect to database",
-                  "error connecting to database",
-                  "could not connect to the database",
-                  "connection to database server failed",
-                  "prisma client error",
-                  "prismaerror",
-                  "react-error-boundary",
-                  "errorboundary",
-                  "something went wrong",
-                  "an unexpected error has occurred",
-                  "application error: a client-side exception has occurred",
-                  "application error: a server-side exception has occurred",
-                  "project is paused",
-                  "this project has been paused",
-                  "your project has been paused",
-                  "500 internal server error",
-                  "502 bad gateway",
-                  "503 service unavailable",
-                  "504 gateway timeout",
-                  "connection refused",
-                  "fetch failed",
-                  "supabase",
-                  "databaseerror",
-                  "econnrefused",
-                  "econnreset",
-                  "etimedout",
-                  "unable to connect",
-                  "service unavailable",
-                  "bad gateway",
-                  "upstream error",
-                  "worker exited",
-                  "cold start",
-                  "function invocation timeout",
-                  "runtime exited",
-                  "module not found",
-                  "cannot find module",
-                  "referenceerror",
-                  "typeerror: cannot read",
-                  "err_name_not_resolved",
-                  "net::err_",
-                  "uncaught typeerror",
-                  "uncaught referenceerror",
-                  "unhandledrejection",
-                  "loading chunk",
-                  "loading css chunk",
-                ];
+                failureReason = `System error signature found: "${foundError}"`;
+              } else if (web.expected_keyword) {
+                const keywords = web.expected_keyword
+                  .split(",")
+                  .map((k: string) => k.trim().toLowerCase())
+                  .filter(Boolean);
 
-                const bodyLower = htmlText.toLowerCase();
-                const foundError = errorKeywords.find(keyword =>
-                  bodyLower.includes(keyword)
+                const foundKeywords = keywords.filter((k: string) =>
+                  bodyLower.includes(k)
                 );
 
-                if (foundError) {
+                if (foundKeywords.length === 0) {
                   status = "SOMETHING WRONG";
-                  failureReason = `System error signature found: "${foundError}"`;
-                } else if (web.expected_keyword) {
-                  const keywords = web.expected_keyword
-                    .split(",")
-                    .map((k: string) => k.trim().toLowerCase())
-                    .filter(Boolean);
-
-                  const foundKeywords = keywords.filter((k: string) =>
-                    bodyLower.includes(k)
-                  );
-
-                  if (foundKeywords.length === 0) {
-                    status = "SOMETHING WRONG";
-                    failureReason = `None of the expected keywords (${web.expected_keyword}) were found on the page`;
-                  }
+                  failureReason = `None of the expected keywords (${web.expected_keyword}) were found on the page`;
                 }
               }
             }
