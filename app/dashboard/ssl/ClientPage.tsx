@@ -31,19 +31,22 @@ export default function SSLClient() {
 
   const certificates = monitors.map((m) => {
     const domain = m.url.replace(/^https?:\/\/(www\.)?/i, "").split("/")[0];
+    const hasSslData =
+      m.sslDaysRemaining !== undefined &&
+      m.sslDaysRemaining !== null &&
+      m.sslIssuer &&
+      m.sslIssuer !== "--";
     return {
       id: m.id,
       name: m.name,
       url: m.url,
       domain: domain,
-      issuer: m.sslIssuer && m.sslIssuer !== "--" ? m.sslIssuer : "Let's Encrypt",
-      expiresAt:
-        m.sslExpiresAt && m.sslExpiresAt !== "--"
-          ? m.sslExpiresAt
-          : new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)
-              .toISOString()
-              .split("T")[0],
-      daysRemaining: m.sslDaysRemaining !== undefined ? m.sslDaysRemaining : 90,
+      issuer: m.sslIssuer || "--",
+      expiresAt: m.sslExpiresAt || "--",
+      daysRemaining:
+        hasSslData && m.sslDaysRemaining !== undefined
+          ? m.sslDaysRemaining
+          : null,
     };
   });
 
@@ -53,7 +56,15 @@ export default function SSLClient() {
       cert.domain.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
-  const getWarningLevel = (days: number) => {
+  const getWarningLevel = (days: number | null) => {
+    if (days === null || days === undefined) {
+      return {
+        text: "Unknown",
+        class:
+          "bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400 border-zinc-200 dark:border-zinc-700/50",
+        icon: <AlertCircle className="h-4 w-4 text-zinc-500" />,
+      };
+    }
     if (days <= 7)
       return {
         text: "Urgent",
@@ -139,6 +150,18 @@ export default function SSLClient() {
     {
       header: "Days Remaining",
       accessor: (row: (typeof certificates)[0]) => {
+        if (row.daysRemaining === null || row.daysRemaining === undefined) {
+          return (
+            <div className="w-full max-w-[150px] space-y-1.5">
+              <div className="flex justify-between text-xs font-bold text-zinc-500 dark:text-zinc-400">
+                <span>Not checked</span>
+              </div>
+              <div className="w-full h-1.5 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden">
+                <div className="h-full rounded-full bg-zinc-300 dark:bg-zinc-700" style={{ width: "0%" }}></div>
+              </div>
+            </div>
+          );
+        }
         const percent = Math.min(100, (row.daysRemaining / 90) * 100);
         let barColor = "bg-emerald-500";
         if (row.daysRemaining <= 7) barColor = "bg-rose-600 animate-pulse";
@@ -172,7 +195,9 @@ export default function SSLClient() {
   ];
 
   // Find certificates with warning states
-  const warningCerts = certificates.filter((c) => c.daysRemaining <= 30);
+  const hasDays = (cert: (typeof certificates)[0]): cert is (typeof certificates)[0] & { daysRemaining: number } =>
+    cert.daysRemaining !== null && cert.daysRemaining !== undefined;
+  const warningCerts = certificates.filter(hasDays).filter((c) => c.daysRemaining <= 30);
   const urgentCertsCount = warningCerts.filter(
     (c) => c.daysRemaining <= 7,
   ).length;

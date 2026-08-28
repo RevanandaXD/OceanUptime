@@ -16,12 +16,14 @@ import {
 } from "lucide-react";
 import Tables from "@/component/shared/Tables";
 import { useDashboard } from "../../../context/DashboardContext";
+import { triggerRedeploy } from "./action";
 
 export default function DeploymentClient() {
-  const { monitors, configuredProviders = [], isLoadingInitialData } = useDashboard();
+  const { monitors, configuredProviders = [], isLoadingInitialData, handleRefresh } = useDashboard();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedProvider, setSelectedProvider] = useState("ALL");
   const [deployingId, setDeployingId] = useState<string | null>(null);
+  const [deployError, setDeployError] = useState<string | null>(null);
 
   if (isLoadingInitialData && monitors.length === 0) {
     return (
@@ -34,12 +36,21 @@ export default function DeploymentClient() {
     );
   }
 
-  const handleRedeploy = (id: string) => {
-    setDeployingId(id);
-    setTimeout(() => {
+  const handleRedeploy = async (websiteId: string) => {
+    setDeployingId(websiteId);
+    setDeployError(null);
+    try {
+      const result = await triggerRedeploy(websiteId);
+      if (result?.success) {
+        await handleRefresh();
+      }
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "Failed to trigger deployment.";
+      setDeployError(message);
+    } finally {
       setDeployingId(null);
-      alert("Deployment triggered successfully!");
-    }, 1500);
+    }
   };
 
   const activeProviders = Array.from(
@@ -54,19 +65,19 @@ export default function DeploymentClient() {
     (p) => !configuredProviders.includes(p.toLowerCase())
   );
 
-  // Derive deployment objects from monitors list
   const deployments = monitors
     .filter((m) => m.provider !== "Generic HTTP")
     .map((m) => ({
       id: `dep-${m.id}`,
+      websiteId: m.id,
       website: m.name,
       provider: m.provider,
-      deploymentId: m.deploymentId || `dpl_${m.id}cf`,
-      status: m.deploymentStatus || "READY",
-      commitHash: m.commitHash || "7b8a9c0",
-      commitMsg: m.commitMsg || "Update styling layout config",
-      deployedAt: m.deployedAt || "3 hours ago",
-      branch: m.branch || "main",
+      deploymentId: m.deploymentId && m.deploymentId !== "--" ? m.deploymentId : "--",
+      status: m.deploymentStatus && m.deploymentStatus !== "UNKNOWN" ? m.deploymentStatus : "UNKNOWN",
+      commitHash: m.commitHash && m.commitHash !== "--" ? m.commitHash : "--",
+      commitMsg: m.commitMsg && m.commitMsg !== "--" ? m.commitMsg : "No deployment data yet",
+      deployedAt: m.deployedAt && m.deployedAt !== "--" ? m.deployedAt : "--",
+      branch: m.branch && m.branch !== "--" ? m.branch : "--",
     }));
 
   const filteredDeployments = deployments.filter((dep) => {
@@ -99,27 +110,37 @@ export default function DeploymentClient() {
     },
     {
       header: "Status",
-      accessor: (row: (typeof deployments)[0]) => (
-        <span
-          className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold ${
-            row.status === "READY"
-              ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30"
-              : "bg-rose-50 text-rose-700 dark:bg-rose-950/30 dark:text-rose-400 border border-rose-100 dark:border-rose-900/30"
-          }`}
-        >
-          {row.status === "READY" ? (
-            <CheckCircle2 className="h-3 w-3" />
-          ) : (
-            <XCircle className="h-3 w-3" />
-          )}
-          {row.status === "READY" ? "Ready" : "Failed"}
-        </span>
-      ),
+      accessor: (row: (typeof deployments)[0]) => {
+        if (row.status === "UNKNOWN") {
+          return (
+            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700/50">
+              <AlertCircle className="h-3 w-3" />
+              Pending
+            </span>
+          );
+        }
+        return (
+          <span
+            className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold ${
+              row.status === "READY"
+                ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30"
+                : "bg-rose-50 text-rose-700 dark:bg-rose-950/30 dark:text-rose-400 border border-rose-100 dark:border-rose-900/30"
+            }`}
+          >
+            {row.status === "READY" ? (
+              <CheckCircle2 className="h-3 w-3" />
+            ) : (
+              <XCircle className="h-3 w-3" />
+            )}
+            {row.status === "READY" ? "Ready" : "Failed"}
+          </span>
+        );
+      },
     },
     {
       header: "Commit Info",
       accessor: (row: (typeof deployments)[0]) => (
-        <div className="max-w-[240px]">
+        <div className="max-w-60">
           <div className="text-xs font-semibold text-zinc-700 dark:text-zinc-350 truncate">
             {row.commitMsg}
           </div>
@@ -144,27 +165,31 @@ export default function DeploymentClient() {
     },
     {
       header: "Actions",
-      accessor: (row: (typeof deployments)[0]) => (
-        <div className="flex gap-2 justify-end">
-          <button
-            onClick={() => handleRedeploy(row.id)}
-            disabled={deployingId !== null}
-            className="p-1.5 border border-zinc-200 dark:border-zinc-800 rounded-lg text-xs font-bold bg-white dark:bg-zinc-900 hover:bg-zinc-50 dark:hover:bg-zinc-800/80 text-zinc-700 dark:text-zinc-300 flex items-center gap-1.5 cursor-pointer disabled:opacity-50 transition-colors shadow-sm"
-          >
-            <RotateCw
-              className={`h-3.5 w-3.5 text-zinc-400 ${deployingId === row.id ? "animate-spin text-indigo-500" : ""}`}
-            />
-            {deployingId === row.id ? "Deploying..." : "Redeploy"}
-          </button>
-          <a
-            href="#"
-            onClick={(e) => e.preventDefault()}
-            className="p-1.5 border border-zinc-200 dark:border-zinc-800 rounded-lg text-xs font-bold bg-white dark:bg-zinc-900 hover:bg-zinc-50 dark:hover:bg-zinc-800/80 text-zinc-400 hover:text-zinc-755 dark:hover:text-zinc-200 flex items-center justify-center transition-colors shadow-sm"
-          >
-            <ExternalLink className="h-3.5 w-3.5" />
-          </a>
-        </div>
-      ),
+      accessor: (row: (typeof deployments)[0]) => {
+        const configured = configuredProviders.includes(row.provider.toLowerCase());
+        return (
+          <div className="flex gap-2 justify-end">
+            <button
+              onClick={() => handleRedeploy(row.websiteId)}
+              disabled={deployingId !== null || !configured}
+              title={!configured ? "Configure this provider's API key in Settings to redeploy" : undefined}
+              className="p-1.5 border border-zinc-200 dark:border-zinc-800 rounded-lg text-xs font-bold bg-white dark:bg-zinc-900 hover:bg-zinc-50 dark:hover:bg-zinc-800/80 text-zinc-700 dark:text-zinc-300 flex items-center gap-1.5 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed transition-colors shadow-sm"
+            >
+              <RotateCw
+                className={`h-3.5 w-3.5 text-zinc-400 ${deployingId === row.websiteId ? "animate-spin text-indigo-500" : ""}`}
+              />
+              {deployingId === row.websiteId ? "Deploying..." : "Redeploy"}
+            </button>
+            <a
+              href="#"
+              onClick={(e) => e.preventDefault()}
+              className="p-1.5 border border-zinc-200 dark:border-zinc-800 rounded-lg text-xs font-bold bg-white dark:bg-zinc-900 hover:bg-zinc-50 dark:hover:bg-zinc-800/80 text-zinc-400 hover:text-zinc-755 dark:hover:text-zinc-200 flex items-center justify-center transition-colors shadow-sm"
+            >
+              <ExternalLink className="h-3.5 w-3.5" />
+            </a>
+          </div>
+        );
+      },
       className: "text-right",
     },
   ];
@@ -236,6 +261,22 @@ export default function DeploymentClient() {
           ))}
         </div>
       </div>
+
+      {/* Redeploy Error Banner */}
+      {deployError && (
+        <div className="bg-rose-500/10 border border-rose-500/30 rounded-xl p-4 flex items-start justify-between gap-4 text-rose-700 dark:text-rose-400">
+          <div className="flex gap-3 items-start">
+            <AlertCircle className="h-5 w-5 shrink-0" />
+            <p className="text-xs font-bold">{deployError}</p>
+          </div>
+          <button
+            onClick={() => setDeployError(null)}
+            className="text-rose-400 hover:text-rose-600 text-sm font-bold cursor-pointer"
+          >
+            &times;
+          </button>
+        </div>
+      )}
 
       {/* Deployments Table */}
       <div className="hover-glow transition-all rounded-xl overflow-hidden border border-zinc-200 dark:border-zinc-800">

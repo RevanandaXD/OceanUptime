@@ -168,13 +168,10 @@ export default function OverviewClient() {
     {
       header: "Uptime",
       accessor: (row: (typeof monitors)[0]) => {
-        const isOffline = incidents.some(
-          (inc) => inc.name === row.name && inc.status === "DOWN",
-        );
         const isPaused = !row.isActive;
         return (
           <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-450 font-mono">
-            {isPaused ? "--" : isOffline ? "98.5%" : row.uptime}
+            {isPaused ? "--" : row.uptime}
           </span>
         );
       },

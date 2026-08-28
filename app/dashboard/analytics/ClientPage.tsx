@@ -15,18 +15,13 @@ import CardStats from "@/component/shared/CardStats";
 import Tables from "@/component/shared/Tables";
 import { useDashboard } from "../../../context/DashboardContext";
 
-const responseTimeTrend = [
-  170, 185, 190, 165, 172, 178, 169, 182, 195, 189, 184, 180, 175, 168, 174,
-  181, 189,
-];
-
 export default function AnalyticsClient() {
   const { monitors, incidents, totalChecks = 0, isLoadingInitialData } = useDashboard();
   const [timeRange, setTimeRange] = useState("7D");
 
   if (isLoadingInitialData && monitors.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
+      <div className="flex flex-col items-center justify-center min-h-100 space-y-4">
         <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
         <p className="text-sm text-zinc-500 dark:text-zinc-400 font-semibold animate-pulse">
           Loading analytics...
@@ -50,6 +45,40 @@ export default function AnalyticsClient() {
         )
       : 0;
 
+  const activeUptimeValues = activeMonitors
+    .map((m) => parseFloat(m.uptime))
+    .filter((val) => !isNaN(val));
+  const avgUptimeGlobal =
+    activeUptimeValues.length > 0
+      ? `${(activeUptimeValues.reduce((a, b) => a + b, 0) / activeUptimeValues.length).toFixed(1)}%`
+      : "--";
+
+  const responseTimeTrend = (() => {
+    const maxPoints = Math.max(
+      0,
+      ...activeMonitors
+        .map((m) => (m.history ? m.history.length : 0))
+        .filter((len) => len > 0),
+    );
+    if (maxPoints === 0) return null;
+
+    const trend: number[] = [];
+    for (let i = 0; i < maxPoints; i++) {
+      const pointValues: number[] = [];
+      activeMonitors.forEach((m) => {
+        const val = m.history?.[i];
+        if (typeof val === "number" && val > 0) pointValues.push(val);
+      });
+      if (pointValues.length === 0) continue;
+      trend.push(
+        Math.round(
+          pointValues.reduce((a, b) => a + b, 0) / pointValues.length,
+        ),
+      );
+    }
+    return trend.length > 0 ? trend : null;
+  })();
+
   // Group monitors by provider to calculate latency and uptime averages
   const providers = [
     "Vercel",
@@ -58,6 +87,7 @@ export default function AnalyticsClient() {
     "Railway",
     "Generic HTTP",
   ];
+  
   const performanceByProvider = providers.map((provider) => {
     const providerMonitors = monitors.filter((m) => m.provider === provider);
     const activeProviderLatency = providerMonitors
@@ -70,13 +100,19 @@ export default function AnalyticsClient() {
         ? `${Math.round(activeProviderLatency.reduce((a, b) => a + b, 0) / activeProviderLatency.length)} ms`
         : "--";
 
-    const hasDowntime = providerMonitors.some((m) =>
-      incidents.some((inc) => inc.name === m.name && inc.status === "DOWN"),
-    );
+    const activeProviderUptime = providerMonitors
+      .filter((m) => m.isActive)
+      .map((m) => parseFloat(m.uptime))
+      .filter((val) => !isNaN(val));
+
+    const providerUptime =
+      activeProviderUptime.length > 0
+        ? `${(activeProviderUptime.reduce((a, b) => a + b, 0) / activeProviderUptime.length).toFixed(1)}%`
+        : "--";
 
     return {
       provider,
-      uptime: hasDowntime ? "98.5%" : "100%",
+      uptime: providerUptime,
       latency: avgLatency,
       numericLatency: activeProviderLatency.length > 0
         ? Math.round(activeProviderLatency.reduce((a, b) => a + b, 0) / activeProviderLatency.length)
@@ -100,7 +136,7 @@ export default function AnalyticsClient() {
       id: m.id,
       name: m.name,
       url: m.url,
-      uptime: isDown ? "98.5%" : m.uptime,
+      uptime: m.uptime,
       avgLatency: m.isActive && !isDown ? m.avgResponse : "--",
       peakLatency: m.isActive && !isDown ? peakStr : "--",
       incidents: websiteIncidents.length,
@@ -201,9 +237,7 @@ export default function AnalyticsClient() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 xl:gap-6">
         <CardStats
           title="Average Uptime"
-          value={
-            incidents.some((inc) => inc.status === "DOWN") ? "99.71%" : "100%"
-          }
+          value={avgUptimeGlobal}
           icon={<TrendingUp className="h-5 w-5" />}
           color="green"
         />
@@ -236,13 +270,22 @@ export default function AnalyticsClient() {
             Global Average Response Time Trend (ms)
           </h3>
           <div className="w-full pb-2">
-            <MonitorChart
-              type="bar"
-              data={responseTimeTrend}
-              height={170}
-              labels={["Start of period", "Midpoint", "Current status"]}
-              color="#6366f1"
-            />
+            {responseTimeTrend && responseTimeTrend.length > 0 ? (
+              <MonitorChart
+                type="bar"
+                data={responseTimeTrend}
+                height={170}
+                labels={["Start of period", "Midpoint", "Current status"]}
+                color="#6366f1"
+              />
+            ) : (
+              <div className="flex flex-col items-center justify-center h-[170px] text-center space-y-2">
+                <BarChart3 className="h-6 w-6 text-zinc-300 dark:text-zinc-600" />
+                <p className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">
+                  No check history yet. Waiting for the first monitoring run.
+                </p>
+              </div>
+            )}
           </div>
         </div>
 

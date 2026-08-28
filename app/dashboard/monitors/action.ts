@@ -105,10 +105,13 @@ export async function toogleMonitorStatus(id: string, isActive: boolean) {
 }
 
 /**
- * Fitur Simulasi: Mengirim PING palsu ke semua website yang aktif.
- * Berguna untuk mengetes grafik sebelum ada Cron Job sungguhan.
+ * Run a real monitoring check on the user's active websites right now.
+ * Performs an actual HTTP request and records the true result (status,
+ * response time, status code) into website_checks. This is a manual "check
+ * now" trigger — it does not fabricate data. It reuses the same status logic
+ * as the scheduled cron so results are consistent.
  */
-export async function triggerSimulatedCheck() {
+export async function triggerManualCheck() {
   const supabase = await createClient();
   const {
     data: { user },
@@ -117,31 +120,58 @@ export async function triggerSimulatedCheck() {
 
   const { data: websites } = await supabase
     .from("websites")
-    .select("id")
+    .select("id, url, name, expected_keyword")
     .eq("user_id", user.id)
     .eq("is_active", true);
 
   if (!websites || websites.length === 0) return { success: true };
 
-  const checksToInsert = websites.map((web) => {
-    const isUp = Math.random() > 0.05; // 95% UP
-    return {
-      website_id: web.id,
-      status: isUp ? "UP" : "DOWN",
-      response_time: isUp ? Math.floor(Math.random() * 300) + 50 : 0,
-      status_code: isUp ? 200 : 502,
-    };
-  });
+  const results = await Promise.all(
+    websites.map(async (web) => {
+      const startTime = performance.now();
+      let status = "DOWN";
+      let statusCode = 0;
 
-  const { error } = await supabase
-    .from("website_checks")
-    .insert(checksToInsert);
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000);
 
-  if (error) {
-    console.error("Simulation error:", error);
-    return { success: false };
-  }
+        const response = await fetch(web.url, {
+          method: "GET",
+          headers: {
+            "User-Agent":
+              "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 OceanUptime/1.0",
+          },
+          signal: controller.signal,
+          cache: "no-store",
+        });
+        clearTimeout(timeoutId);
+
+        statusCode = response.status;
+        if (statusCode >= 200 && statusCode < 400) {
+          status = "UP";
+        } else if (statusCode >= 500) {
+          status = "DOWN";
+        } else {
+          status = "DOWN";
+        }
+      } catch {
+        status = "DOWN";
+      }
+
+      const responseTime = Math.round(performance.now() - startTime);
+
+      await supabase.from("website_checks").insert({
+        website_id: web.id,
+        status,
+        response_time: responseTime,
+        status_code: statusCode,
+      });
+
+      return { name: web.name, status, responseTime: `${responseTime}ms` };
+    }),
+  );
 
   revalidatePath("/dashboard");
-  return { success: true };
+  return { success: true, results };
 }

@@ -199,7 +199,7 @@ export async function getDashboardData() {
     
     // Uptime calculation (simple)
     const upChecks = webChecks.filter(c => c.status === "UP").length;
-    const uptime = webChecks.length > 0 ? ((upChecks / webChecks.length) * 100).toFixed(1) + "%" : "--%";
+    const uptime = webChecks.length > 0 ? ((upChecks / webChecks.length) * 100).toFixed(1) + "%" : "--";
 
     // Default deployment placeholders
     let deploymentStatus = "UNKNOWN";
