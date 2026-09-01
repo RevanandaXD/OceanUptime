@@ -7,10 +7,17 @@ const TAG_LENGTH = 16;
 
 const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY;
 
-if (!ENCRYPTION_KEY) throw new Error("ENCRYPTION_KEY environtment variable is required");
+const getEncryptionKey = (): string => {
+  if (!ENCRYPTION_KEY) {
+    throw new Error(
+      "ENCRYPTION_KEY environment variable is required to encrypt/decrypt provider keys. "
+    );
+  }
+  return ENCRYPTION_KEY;
+};
 
 const getKey = (salt: Buffer) => {
-  return crypto.pbkdf2Sync(ENCRYPTION_KEY, salt, 100000, 32, "sha256");
+  return crypto.pbkdf2Sync(getEncryptionKey(), salt, 100000, 32, "sha256");
 };
 
 export interface EncryptedData {
