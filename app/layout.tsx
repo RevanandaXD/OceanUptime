@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Poppins, Inter } from "next/font/google";
 import "./globals.css";
+import ThemeManager from "@/component/ui/ThemeManager";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -89,13 +90,20 @@ export default function RootLayout({
             __html: `
               (function() {
                 try {
-                  var theme = localStorage.getItem("theme-mode") || "dark";
+                  var path = window.location.pathname;
                   var root = document.documentElement;
-                  root.setAttribute("data-theme", theme);
-                  if (theme === "light") {
-                    root.classList.remove("dark");
-                    root.classList.add("light");
+                  if (path.startsWith("/dashboard")) {
+                    var theme = localStorage.getItem("theme-mode") || "dark";
+                    root.setAttribute("data-theme", theme);
+                    if (theme === "light") {
+                      root.classList.remove("dark");
+                      root.classList.add("light");
+                    } else {
+                      root.classList.add("dark");
+                      root.classList.remove("light");
+                    }
                   } else {
+                    root.setAttribute("data-theme", "dark");
                     root.classList.add("dark");
                     root.classList.remove("light");
                   }
@@ -105,7 +113,10 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <ThemeManager />
+        {children}
+      </body>
     </html>
   );
 }

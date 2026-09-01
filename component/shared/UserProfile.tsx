@@ -4,32 +4,10 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { User, SquareArrowRightExit } from "lucide-react";
 import { logout } from "@/app/auth/action";
+import { useUser } from "@/hooks/useUser";
 
 export function UserProfile() {
-  const [userEmail, setUserEmail] = useState("user@oceanuptime.com");
-  const [userName, setUserName] = useState("Demo User");
-  const [userTier, setUserTier] = useState("Hobby");
-  const supabase = createClient();
-
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      if (data?.user) {
-        setUserEmail(data.user.email || "user@oceanuptime.com");
-        setUserName(data.user.user_metadata?.name || "User");
-
-        supabase
-          .from("profiles")
-          .select("role")
-          .eq("id", data.user.id)
-          .single()
-          .then(({ data: profileData }) => {
-            if (profileData) {
-              setUserTier(profileData.role || "free");
-            }
-          });
-      }
-    });
-  }, [supabase]);
+  const { user } = useUser()
 
   const handleTier = (tier: string) => {
     const normalized = tier.toLowerCase();
@@ -45,20 +23,20 @@ export function UserProfile() {
   };
 
   return (
-    <div className="flex w-full items-center justify-between gap-2 py-4 pl-[14px] pr-3">
+    <div className="flex w-full items-center justify-between gap-2 py-4 pl-3.5 pr-3">
       <div className="flex items-center gap-3 overflow-hidden">
         <div className="flex h-8 w-8 shrink-0 animate-fade-in items-center justify-center rounded-full border border-zinc-300 bg-zinc-200 font-semibold text-zinc-700 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
           <User className="h-4 w-4" />
         </div>
         <div className="flex flex-col gap-0.5 overflow-hidden whitespace-nowrap opacity-0 -translate-x-2 transition-all duration-75 ease-in group-hover:translate-x-0 group-hover:opacity-100 group-hover:duration-300 group-hover:ease-out group-hover:delay-150">
           <span className="truncate text-xs font-bold text-zinc-800 dark:text-zinc-200 flex items-center">
-            {userName}
-            <span className={`ml-1 text-[8px] px-1 rounded-xl tracking-widest ${handleTier(userTier)}`}>
-              {userTier}
+            {user.username}
+            <span className={`ml-1 text-[8px] px-1 rounded-xl tracking-widest ${handleTier(user.tier)}`}>
+              {user.tier}
             </span>
           </span>
           <span className="truncate text-[10px] font-medium text-zinc-400 dark:text-zinc-500">
-            {userEmail}
+            {user.email}
           </span>
         </div>
       </div>

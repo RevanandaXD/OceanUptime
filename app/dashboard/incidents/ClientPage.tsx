@@ -11,7 +11,7 @@ import {
   Loader2,
 } from "lucide-react";
 import Tables from "@/component/shared/Tables";
-import { useDashboard } from "../../../context/DashboardContext";
+import { useDashboard } from "../../../context/dashboardStore";
 import { Incident } from "@/context/types";
 
 export default function IncidentsClient() {
@@ -146,12 +146,12 @@ export default function IncidentsClient() {
           />
         </div>
 
-        <div className="flex gap-2 w-full sm:w-auto overflow-x-auto bg-zinc-100/50 dark:bg-zinc-900/60 p-1 border border-zinc-200/50 dark:border-zinc-800 rounded-lg shrink-0">
+        <div className="flex gap-2 w-full justify-center sm:w-auto overflow-x-auto bg-zinc-100/50 dark:bg-zinc-900/60 p-1 border border-zinc-200/50 dark:border-zinc-800 rounded-lg shrink-0">
           {["ALL", "ACTIVE", "RESOLVED"].map((status) => (
             <button
               key={status}
               onClick={() => setFilterStatus(status)}
-              className={`px-3 py-1.5 rounded-md text-[10px] font-bold tracking-wider transition-all cursor-pointer ${
+              className={`w-full px-3 py-1.5 rounded-md text-[10px] font-bold tracking-wider transition-all cursor-pointer ${
                 filterStatus === status
                   ? "bg-white dark:bg-zinc-950 text-indigo-650 dark:text-indigo-400 shadow-sm border border-zinc-250/50 dark:border-zinc-800"
                   : "text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200"

@@ -137,20 +137,21 @@ export async function getDashboardData() {
     }
   }
 
-  // Fetch Checks
+  // Fetch Checks (bounded: cukup untuk ~10 poin history per website)
   const websiteIds = websites.map(w => w.id);
   const { data: checks } = await supabase
     .from("website_checks")
-    .select("*")
+    .select("id, website_id, status, response_time, checked_at")
     .in("website_id", websiteIds)
-    .order("checked_at", { ascending: false });
+    .order("checked_at", { ascending: false })
+    .limit(200);
 
-  // Fetch Total Checks Count
+  // Fetch Total Checks Count (estimated lebih murah daripada exact)
   let totalChecks = 0;
   if (websiteIds.length > 0) {
     const { count } = await supabase
       .from("website_checks")
-      .select("*", { count: "exact", head: true })
+      .select("website_id", { count: "estimated", head: true })
       .in("website_id", websiteIds);
     totalChecks = count || 0;
   }

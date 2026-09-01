@@ -1,6 +1,6 @@
 "use client";
 
-import { useDashboard } from "@/context/DashboardContext";
+import { useDashboard } from "@/context/dashboardStore";
 import { WifiOff, RotateCw } from "lucide-react";
 
 export default function ConnectionErrorBanner() {

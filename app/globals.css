@@ -174,51 +174,51 @@ html[data-theme="dracula"] {
 }
 
 /* Global Overrides mapping Tailwind classes to theme CSS variables */
-html[data-theme],
-html[data-theme] body {
+html[data-theme] .theme-scope,
+html[data-theme] .theme-scope body {
   background-color: var(--background) !important;
   color: var(--foreground) !important;
 }
 
-html[data-theme] aside,
-html[data-theme] .bg-white,
-html[data-theme] .bg-zinc-900 {
+html[data-theme] .theme-scope aside,
+html[data-theme] .theme-scope .bg-white,
+html[data-theme] .theme-scope .bg-zinc-900 {
   background-color: var(--card) !important;
   border-color: var(--card-border) !important;
 }
 
-html[data-theme] main,
-html[data-theme] .bg-zinc-50,
-html[data-theme] .bg-zinc-950\/20 {
+html[data-theme] .theme-scope main,
+html[data-theme] .theme-scope .bg-zinc-50,
+html[data-theme] .theme-scope .bg-zinc-950\/20 {
   background-color: var(--background) !important;
 }
 
-html[data-theme] .border-zinc-200,
-html[data-theme] .border-zinc-250,
-html[data-theme] .border-zinc-800 {
+html[data-theme] .theme-scope .border-zinc-200,
+html[data-theme] .theme-scope .border-zinc-250,
+html[data-theme] .theme-scope .border-zinc-800 {
   border-color: var(--card-border) !important;
 }
 
-html[data-theme] .text-indigo-650,
-html[data-theme] .text-indigo-600,
-html[data-theme] .text-indigo-400,
-html[data-theme] .text-indigo-700 {
+html[data-theme] .theme-scope .text-indigo-650,
+html[data-theme] .theme-scope .text-indigo-600,
+html[data-theme] .theme-scope .text-indigo-400,
+html[data-theme] .theme-scope .text-indigo-700 {
   color: var(--primary) !important;
 }
 
-html[data-theme] .bg-indigo-50,
-html[data-theme] .bg-indigo-500\/10 {
+html[data-theme] .theme-scope .bg-indigo-50,
+html[data-theme] .theme-scope .bg-indigo-500\/10 {
   background-color: var(--primary-light) !important;
 }
 
-html[data-theme] .bg-indigo-600,
-html[data-theme] .bg-indigo-700 {
+html[data-theme] .theme-scope .bg-indigo-600,
+html[data-theme] .theme-scope .bg-indigo-700 {
   background-color: var(--primary) !important;
   color: var(--primary-foreground) !important;
 }
 
-html[data-theme] .hover\:bg-zinc-100:hover,
-html[data-theme] .hover\:bg-zinc-800\/50:hover {
+html[data-theme] .theme-scope .hover\:bg-zinc-100:hover,
+html[data-theme] .theme-scope .hover\:bg-zinc-800\/50:hover {
   background-color: var(--card-border) !important;
   color: var(--foreground) !important;
 }

@@ -64,19 +64,19 @@ export default function CardStats({
     <div
       className={`p-5 rounded-lg border ${selected.bg} ${selected.border} transition-all duration-300 ${selected.glow} flex flex-col justify-between`}
     >
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3 sm:gap-4">
         {/* Sleek rounded squircle icon container with glass border */}
         <div
-          className={`p-3 rounded-xl border flex items-center justify-center shrink-0 transition-transform duration-300 hover:scale-105 ${selected.iconBg}`}
+          className={`p-2.5 sm:p-3 rounded-xl border flex items-center justify-center shrink-0 transition-transform duration-300 hover:scale-105 ${selected.iconBg}`}
         >
           {icon}
         </div>
 
-        <div className="space-y-1">
+        <div className="space-y-1 min-w-0">
           <p className="text-[11px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest leading-none">
             {title}
           </p>
-          <h3 className="text-2xl font-extrabold font-heading text-zinc-900 dark:text-zinc-50 tracking-tight leading-none mt-1">
+          <h3 className="text-xl sm:text-2xl font-extrabold font-heading text-zinc-900 dark:text-zinc-50 tracking-tight leading-tight mt-1 truncate">
             {value}
           </h3>
         </div>

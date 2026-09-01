@@ -4,12 +4,11 @@ const ALGORITHM = "aes-256-gcm";
 const IV_LENGTH = 16;
 const SALT_LENGTH = 16;
 const TAG_LENGTH = 16;
-const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY || "default_insecure_development_key_change_me_immediately_please";
 
-/**
- * Mendapatkan kunci 32-byte dari ENCRYPTION_KEY menggunakan PBKDF2
- * Ini memastikan bahwa apapun string ENCRYPTION_KEY-nya, panjangnya akan selalu pas 32 bytes (256 bits).
- */
+const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY;
+
+if (!ENCRYPTION_KEY) throw new Error("ENCRYPTION_KEY environtment variable is required");
+
 const getKey = (salt: Buffer) => {
   return crypto.pbkdf2Sync(ENCRYPTION_KEY, salt, 100000, 32, "sha256");
 };
@@ -21,11 +20,6 @@ export interface EncryptedData {
   salt: string;
 }
 
-/**
- * Mengenkripsi teks biasa (plaintext) menjadi AES-256-GCM
- * Mengembalikan objek berisi teks terenkripsi, Initialization Vector (IV), Auth Tag, dan Salt.
- * Semuanya dalam format hex dan bisa disimpan di database.
- */
 export function encryptText(text: string): EncryptedData {
   const salt = crypto.randomBytes(SALT_LENGTH);
   const iv = crypto.randomBytes(IV_LENGTH);
@@ -45,9 +39,6 @@ export function encryptText(text: string): EncryptedData {
   };
 }
 
-/**
- * Mendekripsi data dari AES-256-GCM kembali menjadi teks biasa.
- */
 export function decryptText(encryptedData: EncryptedData): string {
   try {
     const salt = Buffer.from(encryptedData.salt, "hex");

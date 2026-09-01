@@ -15,7 +15,7 @@ import {
   Loader2,
 } from "lucide-react";
 import Tables from "@/component/shared/Tables";
-import { useDashboard } from "../../../context/DashboardContext";
+import { useDashboard } from "../../../context/dashboardStore";
 import { triggerRedeploy } from "./action";
 
 export default function DeploymentClient() {

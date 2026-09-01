@@ -2,6 +2,7 @@
 
 import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
+import { performCheck } from "@/utils/monitoring";
 
 export async function addMonitor(data: {
   name: string;
@@ -39,7 +40,7 @@ export async function addMonitor(data: {
 
   // Limits per role
   const LIMITS: Record<string, number> = {
-    free: 7,
+    free: 5,
     pro: 24,
     admin: 9999,
   };
@@ -128,47 +129,18 @@ export async function triggerManualCheck() {
 
   const results = await Promise.all(
     websites.map(async (web) => {
-      const startTime = performance.now();
-      let status = "DOWN";
-      let statusCode = 0;
-
-      try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000);
-
-        const response = await fetch(web.url, {
-          method: "GET",
-          headers: {
-            "User-Agent":
-              "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 OceanUptime/1.0",
-          },
-          signal: controller.signal,
-          cache: "no-store",
-        });
-        clearTimeout(timeoutId);
-
-        statusCode = response.status;
-        if (statusCode >= 200 && statusCode < 400) {
-          status = "UP";
-        } else if (statusCode >= 500) {
-          status = "DOWN";
-        } else {
-          status = "DOWN";
-        }
-      } catch {
-        status = "DOWN";
-      }
-
-      const responseTime = Math.round(performance.now() - startTime);
+      const outcome = await performCheck(web.url, {
+        expectedKeyword: web.expected_keyword,
+      });
 
       await supabase.from("website_checks").insert({
         website_id: web.id,
-        status,
-        response_time: responseTime,
-        status_code: statusCode,
+        status: outcome.status,
+        response_time: outcome.responseTime,
+        status_code: outcome.statusCode,
       });
 
-      return { name: web.name, status, responseTime: `${responseTime}ms` };
+      return { name: web.name, status: outcome.status, responseTime: `${outcome.responseTime}ms` };
     }),
   );
 

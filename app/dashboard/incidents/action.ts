@@ -11,11 +11,39 @@ export async function resolveIncident(incidentId: string) {
 
   if (!user) throw new Error("Unathorized");
 
+  const { data: incident, error: fetchError } = await supabase
+    .from("incidents")
+    .select('id, website_id, started_at')
+    .eq('id', incidentId)
+    .maybeSingle();
+  
+  if (fetchError) {
+    throw new Error("Failed to fetch incident")
+  }
+
+  if (!incident) {
+    throw new Error("Incident not found")
+  }
+
+  const { data:web } = await supabase
+    .from('websites')
+    .select('id')
+    .eq('id', incident.website_id)
+    .eq('user_id', user.id)
+    .single()
+  
+  if (!web) throw new Error("Unathorized");
+
+  const now = new Date();
+  const startedAt = new Date(incident.started_at);
+  const durationSec = Math.max(0, Math.round((now.getTime() -  startedAt.getTime()) / 1000 ))
+
   const { error } = await supabase
-    .from("websites")
+    .from("incidents")
     .update({
-      status: "RESOLVE",
-      resolved_at: new Date().toISOString(),
+      status: "RESOLVED",
+      resolved_at: now.toISOString(),
+      duration: durationSec,
     })
     .eq("id", incidentId);
 

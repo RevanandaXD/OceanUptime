@@ -12,7 +12,7 @@ import {
   Loader2,
 } from "lucide-react";
 import Tables from "@/component/shared/Tables";
-import { useDashboard } from "../../../context/DashboardContext";
+import { useDashboard } from "../../../context/dashboardStore";
 
 export default function SSLClient() {
   const { monitors, isLoadingInitialData } = useDashboard();
@@ -187,7 +187,7 @@ export default function SSLClient() {
       header: "Expiration Date",
       accessor: (row: (typeof certificates)[0]) => (
         <span className="text-xs font-mono text-zinc-650 dark:text-zinc-400 flex items-center gap-1.5">
-          <Calendar className="h-3.5 w-3.5 text-zinc-400" />
+          <Calendar className="hidden md:block h-3.5 w-3.5 text-zinc-400" />
           {row.expiresAt}
         </span>
       ),

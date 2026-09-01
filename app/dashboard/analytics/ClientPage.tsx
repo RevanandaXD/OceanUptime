@@ -13,7 +13,7 @@ import {
 import MonitorChart from "@/component/shared/MonitorChart";
 import CardStats from "@/component/shared/CardStats";
 import Tables from "@/component/shared/Tables";
-import { useDashboard } from "../../../context/DashboardContext";
+import { useDashboard } from "../../../context/dashboardStore";
 
 export default function AnalyticsClient() {
   const { monitors, incidents, totalChecks = 0, isLoadingInitialData } = useDashboard();

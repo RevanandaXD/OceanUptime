@@ -1,6 +1,6 @@
 "use client";
 
-import { useDashboard } from "@/context/DashboardContext";
+import { useDashboard } from "@/context/dashboardStore";
 import { Sun, Moon, Laptop, Palette, Check } from "lucide-react";
 
 type ThemeId =
@@ -150,7 +150,7 @@ export default function ThemeConfigForm() {
                 ))}
                 {t.isDeveloperChoice ? (
                   <span className="ml-2 px-1.5 rounded-lg font-medium text-[9px] text-white bg-blue-600">
-                    Developer Approve
+                    Developer Choice
                   </span>
                 ) : (
                   ""

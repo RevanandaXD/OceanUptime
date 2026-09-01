@@ -1,5 +1,7 @@
 "use client";
 
+import packageJson from '../../package.json'
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -16,7 +18,11 @@ import Image from "next/image";
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const activeTab = pathname.split("/").pop() || "overview";
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+  const activeTab = mounted ? pathname.split("/").pop() || "overview" : "";
 
   const links = [
     {
@@ -64,13 +70,13 @@ export default function Sidebar() {
   ];
 
   return (
-    <aside className="group fixed left-0 top-0 z-40 flex min-h-screen w-[60px] flex-col overflow-hidden border-r border-zinc-200 bg-white transition-[width] duration-300 ease-in-out hover:w-64 dark:border-zinc-200/10 dark:bg-zinc-900 select-none shrink-0">
+    <aside className="group fixed left-0 top-0 z-40 hidden min-h-screen w-15 flex-col overflow-hidden border-r border-zinc-200 bg-white transition-[width] duration-300 ease-in-out hover:w-64 md:flex dark:border-zinc-200/10 dark:bg-zinc-900 select-none shrink-0">
       {/* Brand Header */}
       <div className="flex h-16 w-full shrink-0 items-center border-b border-zinc-200 dark:border-zinc-800">
         {/* pl-[14px] + w-8(32px) = 46. 14px on left, 14px on right of the 60px container -> perfect center! */}
         <Link
           href="/dashboard/overview"
-          className="flex items-center pl-[14px] outline-none group/logo w-full"
+          className="flex items-center pl-3.5 outline-none group/logo w-full"
         >
           <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg">
             <Image 
@@ -82,14 +88,14 @@ export default function Sidebar() {
             />
           </div>
           <span className="ml-3 font-sans font-bold text-lg text-zinc-900 dark:text-zinc-100 tracking-tight opacity-0 -translate-x-2 transition-all duration-300 ease-in-out group-hover:translate-x-0 group-hover:opacity-100 whitespace-nowrap">
-            OceanUptime
+            OceanUptime <span className='text-xs'>{packageJson.version}</span>
           </span>
         </Link>
       </div>
 
       {/* Sidebar Navigation */}
       <div className="flex-1 overflow-y-auto overflow-x-hidden py-6">
-        <div className="mb-3 pl-[20px] text-xs font-semibold tracking-wider text-zinc-500 opacity-0 -translate-x-2 transition-all duration-75 ease-in group-hover:translate-x-0 group-hover:opacity-100 group-hover:duration-300 group-hover:ease-out group-hover:delay-100">
+        <div className="mb-3 pl-5 text-xs font-semibold tracking-wider text-zinc-500 opacity-0 -translate-x-2 transition-all duration-75 ease-in group-hover:translate-x-0 group-hover:opacity-100 group-hover:duration-300 group-hover:ease-out group-hover:delay-100">
           MENU
         </div>
         <nav className="flex flex-col gap-1">

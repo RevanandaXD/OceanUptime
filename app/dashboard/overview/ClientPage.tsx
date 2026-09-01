@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useDashboard } from "@/context/DashboardContext";
+import { useDashboard } from "@/context/dashboardStore";
 import CardStats from "@/component/shared/CardStats";
 import {
   Activity,
@@ -229,7 +229,7 @@ export default function OverviewClient() {
       </div>
 
       {/* Metrics Row */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 xl:gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 xl:gap-6">
         <CardStats
           title="Total Websites"
           value={totalWebsites}

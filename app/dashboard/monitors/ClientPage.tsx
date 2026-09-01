@@ -13,7 +13,7 @@ import {
   Loader2,
 } from "lucide-react";
 import MonitorChart from "@/component/shared/MonitorChart";
-import { useDashboard } from "@/context/DashboardContext";
+import { useDashboard } from "@/context/dashboardStore";
 import { addMonitor, deleteMonitor as deleteMonitorAction, toogleMonitorStatus } from "./action";
 import Popup from "@/component/shared/Popup";
 export default function MonitorsClient() {
@@ -180,7 +180,7 @@ export default function MonitorsClient() {
       </div>
 
       {/* Grid of Monitors */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {filteredMonitors.map((monitor) => {
           const activeIncident = incidents.find(
             (inc) => inc.name === monitor.name && (inc.status === "DOWN" || inc.status === "SOMETHING WRONG"),
@@ -199,19 +199,19 @@ export default function MonitorsClient() {
               <div>
                 {/* Header info */}
                 <div className="flex justify-between items-start gap-4">
-                  <div>
+                  <div className="min-w-0">
                     <h3 className="font-bold text-zinc-900 dark:text-white flex items-center gap-2 text-base">
-                      {monitor.name}
+                      <span className="truncate">{monitor.name}</span>
                       <a
                         href={monitor.url}
                         target="_blank"
                         rel="noreferrer"
-                        className="text-zinc-400 hover:text-indigo-650 dark:hover:text-indigo-400 transition-colors"
+                        className="text-zinc-400 hover:text-indigo-650 dark:hover:text-indigo-400 transition-colors shrink-0"
                       >
                         <ArrowUpRight className="h-4 w-4" />
                       </a>
                     </h3>
-                    <p className="text-xs text-zinc-400 dark:text-zinc-500 font-mono mt-0.5">
+                    <p className="text-xs text-zinc-400 dark:text-zinc-500 font-mono mt-0.5 truncate">
                       {monitor.url}
                     </p>
                   </div>

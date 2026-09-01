@@ -1,10 +1,30 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
+const AUTH_COOKIE_PREFIX = `sb-${process.env.NEXT_PUBLIC_SUPABASE_PROJECT_REF || "ncdycmmejguoqqzbfxsz"}-auth-token`;
+
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request,
   });
+
+  const isDashboardRoute = request.nextUrl.pathname.startsWith("/dashboard");
+  const isAuthRoute = request.nextUrl.pathname.startsWith("/auth");
+
+  const authCookies = request.cookies
+    .getAll()
+    .filter((c) => c.name.startsWith(AUTH_COOKIE_PREFIX));
+
+  // Fast path: no session cookie present -> guaranteed unauthenticated.
+  // Skip the expensive Supabase auth network round-trip entirely.
+  if (authCookies.length === 0) {
+    if (isDashboardRoute) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/auth";
+      return NextResponse.redirect(url);
+    }
+    return supabaseResponse;
+  }
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -27,14 +47,9 @@ export async function updateSession(request: NextRequest) {
     }
   );
 
-  // IMPORTANT: Do NOT retrieve user session with supabase.auth.getSession()
-  // as it is not secure. Use getUser() instead.
   const {
     data: { user },
   } = await supabase.auth.getUser();
-
-  const isDashboardRoute = request.nextUrl.pathname.startsWith("/dashboard");
-  const isAuthRoute = request.nextUrl.pathname.startsWith("/auth");
 
   // Redirect unauthenticated user trying to access dashboard to auth page
   if (!user && isDashboardRoute) {
