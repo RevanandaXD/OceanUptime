@@ -128,7 +128,7 @@ export default function Home() {
               {badge.map((badge, _) => (
                 <span
                   key={_}
-                  className="px-3 py-1 rounded-full border border-zinc-800 bg-zinc-900/60 text-xs text-zinc-300 mb-6 backdrop-blur-xs"
+                  className="hidden md:block lg:block px-3 py-1 rounded-full border border-zinc-800 bg-zinc-900/60 text-xs text-zinc-300 mb-6 backdrop-blur-xs"
                 >
                   {badge}
                 </span>
@@ -287,7 +287,7 @@ export default function Home() {
                   <div className="p-5 rounded-xl border border-zinc-850 bg-zinc-900/40 hover:border-blue-500/30 transition-all relative overflow-hidden group">
                     {/* Simulated tracer line connecting to the right */}
                     <div
-                      className="hidden lg:block connection-trace-h w-[200px]"
+                      className="hidden lg:block connection-trace-h w-50"
                       style={{
                         right: "-200px",
                         top: "50%",
@@ -316,7 +316,7 @@ export default function Home() {
               </div>
               <div className="h-20 w-px bg-zinc-800/80 relative">
                 <div
-                  className="connection-trace-v h-[40px]"
+                  className="connection-trace-v h-10"
                   style={{ animationDelay: "1s" }}
                 />
               </div>
