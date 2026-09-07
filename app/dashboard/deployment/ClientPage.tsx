@@ -19,7 +19,7 @@ import { useDashboard } from "../../../context/dashboardStore";
 import { triggerRedeploy } from "./action";
 
 export default function DeploymentClient() {
-  const { monitors, configuredProviders = [], isLoadingInitialData, handleRefresh } = useDashboard();
+  const { monitors, configuredProviders = [], isLoadingInitialData, handleRefresh, isDemo } = useDashboard();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedProvider, setSelectedProvider] = useState("ALL");
   const [deployingId, setDeployingId] = useState<string | null>(null);
@@ -40,6 +40,12 @@ export default function DeploymentClient() {
     setDeployingId(websiteId);
     setDeployError(null);
     try {
+      // Demo mode: simulate a deployment instead of calling provider APIs.
+      if (isDemo) {
+        await new Promise((resolve) => setTimeout(resolve, 900));
+        await handleRefresh();
+        return;
+      }
       const result = await triggerRedeploy(websiteId);
       if (result?.success) {
         await handleRefresh();

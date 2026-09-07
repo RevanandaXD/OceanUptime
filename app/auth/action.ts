@@ -44,7 +44,7 @@ export async function signup(formData: FormData) {
   }
 
   return {
-    success: "Pendaftaran berhasil! Silakan cek email Anda untuk konfirmasi (jika fitur konfirmasi email aktif di Supabase)."
+    success: "Pendaftaran berhasil! Silakan cek email Anda untuk konfirmasi."
   }
 }
 

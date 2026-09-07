@@ -3,6 +3,16 @@
 import { create } from "zustand";
 import { useEffect } from "react";
 import { getDashboardData } from "@/app/dashboard/action";
+import { createClient } from "@/utils/supabase/client";
+import {
+  DEMO_ACTIVITY,
+  DEMO_CONFIGURED_PROVIDERS,
+  DEMO_INCIDENTS,
+  DEMO_MONITORS,
+  DEMO_TOTAL_CHECKS,
+  getDemoCookie,
+  setDemoCookie,
+} from "@/utils/demo";
 import { Monitor, Incident, Activity } from "./types";
 
 interface DashboardStore {
@@ -24,9 +34,45 @@ interface DashboardStore {
   setError: (message: string | null) => void;
   theme: string;
   applyGlobalTheme: (themeId: string) => void;
+  isDemo: boolean;
+  setDemo: (value: boolean) => void;
   fetchData: () => Promise<void>;
   handleRefresh: () => Promise<void>;
-  init: () => void;
+  init: () => Promise<void>;
+}
+
+// Quick non-null setter to apply demo data into the store.
+function applyDemoData(set: (partial: Partial<DashboardStore>) => void) {
+  set({
+    monitors: DEMO_MONITORS,
+    incidents: DEMO_INCIDENTS,
+    activity: DEMO_ACTIVITY,
+    configuredProviders: DEMO_CONFIGURED_PROVIDERS,
+    totalChecks: DEMO_TOTAL_CHECKS,
+    error: null,
+  });
+}
+
+// Demo mode = explicit ?demo=1 in the URL (permanently for unauthenticated
+// visitors via cookie), otherwise real session data.
+async function resolveDemo(): Promise<boolean> {
+  if (typeof window === "undefined") return false;
+
+  const urlDemo = new URLSearchParams(window.location.search).has("demo");
+  if (urlDemo) {
+    setDemoCookie();
+    return true;
+  }
+
+  // Persisted demo cookie is only honored when there is no active session,
+  // so real users can never get stuck in demo mode.
+  if (getDemoCookie() === String("1")) {
+    const supabase = createClient();
+    const { data } = await supabase.auth.getSession();
+    if (!data.session) return true;
+  }
+
+  return false;
 }
 
 export const useDashboardStore = create<DashboardStore>((set, get) => ({
@@ -47,6 +93,8 @@ export const useDashboardStore = create<DashboardStore>((set, get) => ({
   error: null,
   setError: (error) => set({ error }),
   theme: "dark",
+  isDemo: false,
+  setDemo: (isDemo) => set({ isDemo }),
 
   applyGlobalTheme: (themeId) => {
     set({ theme: themeId });
@@ -64,6 +112,12 @@ export const useDashboardStore = create<DashboardStore>((set, get) => ({
   },
 
   fetchData: async () => {
+    // Demo mode is fully client-side: never touch Supabase or localStorage.
+    if (get().isDemo) {
+      applyDemoData(set);
+      return;
+    }
+
     try {
       const data = await getDashboardData();
       const nextMonitors = data.monitors || [];
@@ -104,9 +158,19 @@ export const useDashboardStore = create<DashboardStore>((set, get) => ({
     set({ isRefreshing: false });
   },
 
-  init: () => {
+  init: async () => {
     const savedTheme = localStorage.getItem("theme-mode") || "dark";
     get().applyGlobalTheme(savedTheme);
+
+    const isDemo = await resolveDemo();
+    set({ isDemo });
+
+    // Demo visitors jump straight to sample data - no cache, no fetch.
+    if (isDemo) {
+      applyDemoData(set);
+      set({ isLoadingInitialData: false });
+      return;
+    }
 
     try {
       const cachedMonitors = localStorage.getItem("cached-monitors");
@@ -144,29 +208,36 @@ export function useDashboard(): DashboardStore {
 
 export function DashboardInit() {
   useEffect(() => {
-    useDashboardStore.getState().init();
+    let cleanup: (() => void) | undefined;
 
-    const INTERVAL_MS = 20000;
-    const interval = setInterval(() => {
-      if (
-        document.visibilityState === "visible" &&
-        !useDashboardStore.getState().isRefreshing
-      ) {
-        useDashboardStore.getState().fetchData();
-      }
-    }, INTERVAL_MS);
+    useDashboardStore.getState().init().then(() => {
+      // Demo data is static - no polling or refetch listeners needed.
+      if (useDashboardStore.getState().isDemo) return;
 
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === "visible") {
-        useDashboardStore.getState().fetchData();
-      }
-    };
-    document.addEventListener("visibilitychange", handleVisibilityChange);
+      const INTERVAL_MS = 20000;
+      const interval = setInterval(() => {
+        if (
+          document.visibilityState === "visible" &&
+          !useDashboardStore.getState().isRefreshing
+        ) {
+          useDashboardStore.getState().fetchData();
+        }
+      }, INTERVAL_MS);
 
-    return () => {
-      clearInterval(interval);
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-    };
+      const handleVisibilityChange = () => {
+        if (document.visibilityState === "visible") {
+          useDashboardStore.getState().fetchData();
+        }
+      };
+      document.addEventListener("visibilitychange", handleVisibilityChange);
+
+      cleanup = () => {
+        clearInterval(interval);
+        document.removeEventListener("visibilitychange", handleVisibilityChange);
+      };
+    });
+
+    return () => cleanup?.();
   }, []);
   return null;
 }

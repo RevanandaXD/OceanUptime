@@ -36,7 +36,7 @@ export default function Navbar() {
     { label: "Features", id: "features" },
     { label: "FAQ", id: "faq" },
     { label: "Dashboard", id: "dashboard", href: "/dashboard?tab=overview" },
-  ]
+  ];
 
   return (
     <nav className="fixed top-4 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-7xl h-16 rounded-2xl border border-zinc-800 bg-zinc-950/80 backdrop-blur-md z-50 transition-all duration-300 shadow-xl shadow-black/20">
@@ -94,25 +94,25 @@ export default function Navbar() {
       {/* Mobile Menu Panel */}
       {isOpen && (
         <>
-          <div 
+          <div
             className="fixed inset-0 z-40 md:hidden"
             onClick={() => setIsOpen(false)}
           />
 
           <div className="absolute top-18 left-0 right-0 p-4 rounded-2xl border border-zinc-800 bg-zinc-950/95 backdrop-blur-lg flex flex-col gap-4 md:hidden shadow-2xl animate-in fade-in slide-in-from-top-5 duration-200 z-50">
-          <ul className="flex flex-col gap-3 p-2 text-sm font-semibold text-zinc-400">
-            {navItemsMobile.map((item) => (
-              <li key={item.id}>
-                <button
-                  onClick={() => handleNavigation(item.id)}
-                  className="w-full text-left py-1.5 hover:text-white transition-colors cursor-pointer bg-transparent"
-                >
-                  {item.label}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
+            <ul className="flex flex-col gap-3 p-2 text-sm font-semibold text-zinc-400">
+              {navItemsMobile.map((item) => (
+                <li key={item.id}>
+                  <button
+                    onClick={() => handleNavigation(item.id)}
+                    className="w-full text-left py-1.5 hover:text-white transition-colors cursor-pointer bg-transparent"
+                  >
+                    {item.label}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
         </>
       )}
     </nav>
