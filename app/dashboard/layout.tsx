@@ -3,6 +3,7 @@ import MobileNav from "@/component/ui/MobileNav";
 import { Suspense } from "react";
 import { DashboardInit } from "../../context/dashboardStore";
 import ConnectionErrorBanner from "@/component/shared/ConnectionErrorBanner";
+import DemoBanner from "@/component/shared/DemoBanner";
 
 export default function DashboardLayout({
   children,
@@ -22,6 +23,7 @@ export default function DashboardLayout({
         </Suspense>
         <main className="flex-1 min-w-0 ml-0 md:ml-[60px] p-4 md:p-10 lg:p-12 pb-24 md:pb-10 overflow-y-auto max-h-screen">
           <ConnectionErrorBanner />
+          <DemoBanner />
           {children}
         </main>
       </div>

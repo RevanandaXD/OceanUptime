@@ -11,9 +11,11 @@ export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
 
-  const handleNavigation = (id: string) => {
+  const handleNavigation = (id: string, href?: string) => {
     setIsOpen(false);
-    if (pathname === "/") {
+    if (href) {
+      router.push(href);
+    } else if (pathname === "/") {
       const element = document.getElementById(id);
       if (element) {
         element.scrollIntoView({ behavior: "smooth" });
@@ -27,6 +29,13 @@ export default function Navbar() {
     { label: "Overview", id: "overview" },
     { label: "Features", id: "features" },
     { label: "FAQ", id: "faq" },
+  ];
+
+  const navItemsMobile = [
+    { label: "Overview", id: "overview" },
+    { label: "Features", id: "features" },
+    { label: "FAQ", id: "faq" },
+    { label: "Dashboard", id: "dashboard", href: "/dashboard?tab=overview" },
   ];
 
   return (
@@ -72,12 +81,6 @@ export default function Navbar() {
 
         {/* Toggle Button (Mobile) */}
         <div className="flex md:hidden items-center gap-3">
-          <Link
-            href="/dashboard?tab=overview"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-bold bg-blue-500 hover:bg-blue-600 text-zinc-950 transition-all"
-          >
-            Dashboard
-          </Link>
           <button
             onClick={() => setIsOpen(!isOpen)}
             className="text-zinc-400 hover:text-white transition-colors focus:outline-none"
@@ -90,20 +93,27 @@ export default function Navbar() {
 
       {/* Mobile Menu Panel */}
       {isOpen && (
-        <div className="absolute top-18 left-0 right-0 p-4 rounded-2xl border border-zinc-800 bg-zinc-950/95 backdrop-blur-lg flex flex-col gap-4 md:hidden shadow-2xl animate-in fade-in slide-in-from-top-5 duration-200 z-50">
-          <ul className="flex flex-col gap-3 p-2 text-sm font-semibold text-zinc-400">
-            {navItems.map((item) => (
-              <li key={item.id}>
-                <button
-                  onClick={() => handleNavigation(item.id)}
-                  className="w-full text-left py-2 hover:text-white transition-colors cursor-pointer bg-transparent border-none"
-                >
-                  {item.label}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
+        <>
+          <div
+            className="fixed inset-0 z-40 md:hidden"
+            onClick={() => setIsOpen(false)}
+          />
+
+          <div className="absolute top-18 left-0 right-0 p-4 rounded-2xl border border-zinc-800 bg-zinc-950/95 backdrop-blur-lg flex flex-col gap-4 md:hidden shadow-2xl animate-in fade-in slide-in-from-top-5 duration-200 z-50">
+            <ul className="flex flex-col gap-3 p-2 text-sm font-semibold text-zinc-400">
+              {navItemsMobile.map((item) => (
+                <li key={item.id}>
+                  <button
+                    onClick={() => handleNavigation(item.id)}
+                    className="w-full text-left py-1.5 hover:text-white transition-colors cursor-pointer bg-transparent"
+                  >
+                    {item.label}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </>
       )}
     </nav>
   );

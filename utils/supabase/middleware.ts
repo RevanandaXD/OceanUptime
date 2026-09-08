@@ -1,7 +1,8 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { DEMO_COOKIE_NAME } from "@/utils/demo";
 
-const AUTH_COOKIE_PREFIX = `sb-${process.env.NEXT_PUBLIC_SUPABASE_PROJECT_REF || "ncdycmmejguoqqzbfxsz"}-auth-token`;
+const AUTH_COOKIE_PREFIX = `sb-${process.env.AUTH_COOKIE_PREFIX}-auth-token`;
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
@@ -11,6 +12,12 @@ export async function updateSession(request: NextRequest) {
   const isDashboardRoute = request.nextUrl.pathname.startsWith("/dashboard");
   const isAuthRoute = request.nextUrl.pathname.startsWith("/auth");
 
+  // Demo mode lets unauthenticated visitors explore the dashboard via
+  // ?demo=1 or a persisted demo cookie (set by the client once demo starts).
+  const isDemoRequest =
+    request.nextUrl.searchParams.has("demo") ||
+    request.cookies.get(DEMO_COOKIE_NAME)?.value === "1";
+
   const authCookies = request.cookies
     .getAll()
     .filter((c) => c.name.startsWith(AUTH_COOKIE_PREFIX));
@@ -18,7 +25,7 @@ export async function updateSession(request: NextRequest) {
   // Fast path: no session cookie present -> guaranteed unauthenticated.
   // Skip the expensive Supabase auth network round-trip entirely.
   if (authCookies.length === 0) {
-    if (isDashboardRoute) {
+    if (isDashboardRoute && !isDemoRequest) {
       const url = request.nextUrl.clone();
       url.pathname = "/auth";
       return NextResponse.redirect(url);
@@ -52,7 +59,7 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   // Redirect unauthenticated user trying to access dashboard to auth page
-  if (!user && isDashboardRoute) {
+  if (!user && isDashboardRoute && !isDemoRequest) {
     const url = request.nextUrl.clone();
     url.pathname = "/auth";
     return NextResponse.redirect(url);

@@ -1,6 +1,6 @@
 "use client";
 
-import packageJson from '../../package.json'
+import packageJson from "../../package.json";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -79,7 +79,7 @@ export default function Sidebar() {
           className="flex items-center pl-3.5 outline-none group/logo w-full"
         >
           <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg">
-            <Image 
+            <Image
               src="/Logo.png"
               width={32}
               height={32}
@@ -88,7 +88,7 @@ export default function Sidebar() {
             />
           </div>
           <span className="ml-3 font-sans font-bold text-lg text-zinc-900 dark:text-zinc-100 tracking-tight opacity-0 -translate-x-2 transition-all duration-300 ease-in-out group-hover:translate-x-0 group-hover:opacity-100 whitespace-nowrap">
-            OceanUptime <span className='text-xs'>{packageJson.version}</span>
+            OceanUptime <span className="text-xs">{packageJson.version}</span>
           </span>
         </Link>
       </div>

@@ -160,9 +160,6 @@ export default function AuthPage() {
               <div className="space-y-2">
                 <label className="text-xs font-semibold text-zinc-300 block flex justify-between">
                   <span>Password</span>
-                  {mode === "login" && (
-                    <span className="text-indigo-400 hover:text-indigo-300 cursor-pointer transition-colors">Forgot?</span>
-                  )}
                 </label>
                 <div className="relative">
                   <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />

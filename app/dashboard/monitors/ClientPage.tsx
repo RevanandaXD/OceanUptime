@@ -16,8 +16,9 @@ import MonitorChart from "@/component/shared/MonitorChart";
 import { useDashboard } from "@/context/dashboardStore";
 import { addMonitor, deleteMonitor as deleteMonitorAction, toogleMonitorStatus } from "./action";
 import Popup from "@/component/shared/Popup";
+import type { Monitor } from "@/context/types";
 export default function MonitorsClient() {
-  const { monitors, incidents, handleRefresh, isLoadingInitialData } = useDashboard();
+  const { monitors, incidents, handleRefresh, isLoadingInitialData, isDemo, setMonitors } = useDashboard();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [chartType, setChartType] = useState<"line" | "bar">("line");
@@ -46,6 +47,15 @@ export default function MonitorsClient() {
   }
 
   const toggleActive = async (id: string, name: string, currentlyActive: boolean) => {
+    // Demo mode: mutate local store only.
+    if (isDemo) {
+      setMonitors(
+        monitors.map((m) =>
+          m.id === id ? { ...m, isActive: !currentlyActive } : m,
+        ),
+      );
+      return;
+    }
     try {
       await toogleMonitorStatus(id, !currentlyActive);
       await handleRefresh();
@@ -63,6 +73,12 @@ export default function MonitorsClient() {
   // Confirm delete handler
   const handleConfirmDelete = async () => {
     if (!monitorToDelete) return;
+    if (isDemo) {
+      setMonitors(monitors.filter((m) => m.id !== monitorToDelete.id));
+      setIsDeleteOpen(false);
+      setMonitorToDelete(null);
+      return;
+    }
     setIsDeleting(true);
     try {
       await deleteMonitorAction(monitorToDelete.id);
@@ -85,6 +101,30 @@ export default function MonitorsClient() {
     let urlVal = newMonitor.url.trim();
     if (!/^https?:\/\//i.test(urlVal)) {
       urlVal = `https://${urlVal}`;
+    }
+
+    // Demo mode: append a local sample monitor instead of calling the server.
+    if (isDemo) {
+      const demoMonitor: Monitor = {
+        id: `demo-${Date.now()}`,
+        name: newMonitor.name,
+        url: urlVal,
+        provider: newMonitor.provider,
+        isActive: newMonitor.isActive,
+        uptime: "100.00%",
+        avgResponse: "--",
+        history: [],
+      };
+      setMonitors([demoMonitor, ...monitors]);
+      setIsModalOpen(false);
+      setNewMonitor({
+        name: "",
+        url: "",
+        provider: "Generic HTTP",
+        expectedKeyword: "",
+        isActive: true,
+      });
+      return;
     }
 
     try {
