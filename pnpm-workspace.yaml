@@ -1,6 +1,5 @@
-ignoredBuiltDependencies:
-  - sharp
-  - unrs-resolver
+allowBuilds:
+  unrs-resolver: false
 overrides:
   brace-expansion@<1.1.16: '>=1.1.16'
   brace-expansion@<1.1.17: '>=1.1.17'

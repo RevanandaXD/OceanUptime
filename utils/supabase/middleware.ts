@@ -22,6 +22,15 @@ export async function updateSession(request: NextRequest) {
     .getAll()
     .filter((c) => c.name.startsWith(AUTH_COOKIE_PREFIX));
 
+  // When user navigates away from dashboard, clear the demo cookie so that
+  // clicking "Dashboard" from the landing page goes to login instead of demo.
+  if (!isDashboardRoute) {
+    supabaseResponse.cookies.set(DEMO_COOKIE_NAME, "", {
+      path: "/",
+      maxAge: 0,
+    });
+  }
+
   // Fast path: no session cookie present -> guaranteed unauthenticated.
   // Skip the expensive Supabase auth network round-trip entirely.
   if (authCookies.length === 0) {

@@ -2,6 +2,8 @@
 
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
+import { DEMO_COOKIE_NAME } from "@/utils/demo";
 
 export async function login(formData: FormData) {
   const email = formData.get("email") as string;
@@ -50,8 +52,11 @@ export async function signup(formData: FormData) {
 
 export async function logout() {
   const supabase = await createClient();
+  const cookieStore = await cookies();
 
   await supabase.auth.signOut();
+
+  cookieStore.set(DEMO_COOKIE_NAME, "", { path: "/", maxAge: 0 });
 
   redirect("/auth")
 }
