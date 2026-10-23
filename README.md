@@ -1,36 +1,123 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<div align="center">
 
-## Getting Started
+<img src="public/Logo.png" alt="OceanUptime Logo" width="120" />
 
-First, run the development server:
+# OceanUptime
+
+OceanUptime adalah platform pemantauan uptime dan infrastruktur modern multi-penyedia hosting. Sistem ini dirancang untuk melacak ketersediaan situs web, performa latensi, validitas sertifikat SSL, status deployment, serta riwayat insiden secara terpusat dalam satu dasbor terpadu.
+
+<img src="public/images/Preview.png" alt="OceanUptime Preview" width="100%" />
+
+</div>
+
+## Ikhtisar Arsitektur
+
+Platform ini mengintegrasikan pemantauan ketersediaan waktu nyata dengan analitik performa infrastruktur web. Pemantauan berkala dilakukan untuk mengevaluasi kode status HTTP, waktu respon, sertifikat keamanan, serta integrasi deployment penyedia hosting terkemuka.
+
+## Fitur Utama
+
+| Modul | Deskripsi Kapabilitas |
+| :--- | :--- |
+| Pemantauan Uptime | Pengecekan HTTP dan HTTPS berkala dengan batas waktu sepuluh detik serta pencatatan latensi |
+| Manajemen Insiden | Deteksi otomatis waktu henti layanan beserta durasi downtime dan pelacakan riwayat pemulihan |
+| Pemantauan SSL | Pelacakan masa berlaku sertifikat, identitas penerbit, dan peringatan dini sebelum kedaluwarsa |
+| Integrasi Deployment | Pelacakan status rilis terkini pada penyedia hosting seperti Vercel, Netlify, dan Cloudflare |
+| Dasbor Analitik | Visualisasi metrik kesehatan sistem, persentase uptime, serta distribusi rata-rata waktu respon |
+
+<div align="center">
+
+<img src="public/images/DashboardPreview.png" alt="Dashboard Preview" width="49%" />
+<img src="public/images/DashboardAnalytic.png" alt="Dashboard Analytic" width="49%" />
+
+</div>
+
+## Tumpukan Teknologi
+
+| Lapisan | Teknologi |
+| :--- | :--- |
+| Framework Aplikasi | Next.js 16 App Router |
+| Bahasa Pemrograman | TypeScript 5 |
+| Pustaka Antarmuka | React 19, Tailwind CSS 4, Framer Motion, Lucide React |
+| Autentikasi dan Basis Data | Supabase SSR dan Supabase JS |
+| Manajemen State | Zustand |
+| Pengelola Paket | pnpm |
+
+## Prasyarat Lingkungan
+
+Pastikan perangkat lokal telah terpasang dependensi runtime berikut:
+
+* Node.js versi 20 ke atas
+* pnpm versi 9 ke atas
+
+## Konfigurasi Variabel Lingkungan
+
+Salin berkas contoh konfigurasi ke berkas `.env.local`:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cp .env.example .env.local
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Isi variabel konfigurasi Supabase pada berkas `.env.local`:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Panduan Instalasi dan Menjalankan
 
-## Learn More
+1. Lakukan instalasi seluruh paket dependensi:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+pnpm install
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+2. Jalankan server pengembangan lokal:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+pnpm dev
+```
 
-## Deploy on Vercel
+3. Buka peramban web pada alamat `http://localhost:3000`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Alur Kerja Skrip Proyek
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Perintah | Deskripsi Fungsi |
+| :--- | :--- |
+| `pnpm dev` | Menjalankan server lokal Next.js dalam mode pengembangan |
+| `pnpm build` | Melakukan kompilasi berkas produksi aplikasi secara optimal |
+| `pnpm start` | Menjalankan server aplikasi Next.js dalam mode produksi |
+| `pnpm lint` | Memeriksa kepatuhan format kode menggunakan ESLint |
+
+## Struktur Direktori
+
+```
+oceanuptime/
+├── app/
+│   ├── api/
+│   ├── auth/
+│   ├── dashboard/
+│   │   ├── analytics/
+│   │   ├── deployment/
+│   │   ├── incidents/
+│   │   ├── monitors/
+│   │   ├── overview/
+│   │   └── ssl/
+│   ├── globals.css
+│   ├── layout.tsx
+│   └── page.tsx
+├── component/
+├── context/
+├── hooks/
+├── public/
+│   ├── Logo.png
+│   └── images/
+├── store/
+├── utils/
+└── package.json
+```
+
+## Kebijakan Lisensi
+
+Proyek OceanUptime dilisensikan di bawah ketentuan lisensi privat untuk pengembangan internal. Seluruh hak cipta dilindungi undang-undang.
